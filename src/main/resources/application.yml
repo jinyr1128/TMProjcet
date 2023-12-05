@@ -7,8 +7,8 @@ spring:
     defer-datasource-initialization: true
   datasource:
     url: jdbc:mysql://localhost:3306/menu
-    username: pjh
-    password: 1234
+    username: ${your_username}
+    password: ${your_password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   h2:
     console:
