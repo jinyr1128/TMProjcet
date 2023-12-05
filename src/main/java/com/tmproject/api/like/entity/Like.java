@@ -1,6 +1,7 @@
 package com.tmproject.api.like.entity;
 
 import com.tmproject.api.board.entity.Board;
+import com.tmproject.api.comment.entity.Comment;
 import com.tmproject.api.member.entity.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,5 +38,12 @@ public class Like {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = true)
     private Board board;
+
+    public static Like likeBoard(Member member, Board board) {
+        return Like.builder()
+            .member(member)
+            .board(board)
+            .build();
+    }
 
 }

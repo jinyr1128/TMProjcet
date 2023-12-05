@@ -11,5 +11,4 @@ import org.springframework.stereotype.Repository;
 public interface LikeRepository extends JpaRepository<Like, Long> {
 
     Optional<Like> findByMemberAndBoard(Member member, Board board);
-    Optional<Like> findByMemberAnd(Member member, Board board);
 }

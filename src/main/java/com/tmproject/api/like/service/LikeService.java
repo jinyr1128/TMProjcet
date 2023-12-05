@@ -1,6 +1,8 @@
 package com.tmproject.api.like.service;
 
 import com.tmproject.api.board.entity.Board;
+import com.tmproject.api.board.repository.BoardRepository;
+import com.tmproject.api.like.dto.LikeBoard;
 import com.tmproject.api.like.entity.Like;
 import com.tmproject.api.like.repository.LikeRepository;
 import com.tmproject.api.member.entity.Member;
@@ -14,15 +16,26 @@ import org.springframework.stereotype.Service;
 public class LikeService {
 
     private LikeRepository likeRepository;
+    private BoardRepository boardRepository;
 
     @Transactional
-    public void saveBoardLike(Like like) {
-        likeRepository.save(like);
+    public void saveBoardLike(Long boardId, Member member) {
+        Board board = boardRepository.findById(boardId).orElseThrow();
+        Like likeBoard = Like.likeBoard(member, board);
+
+        likeRepository.save(likeBoard);
     }
 
     @Transactional
-    public void deleteById(Long id) {
-        likeRepository.deleteById(id);
+    public void unLikeComment(Long boardId, Member member) {
+        Board board = boardRepository.findById(boardId).orElseThrow();
+        Optional<Like> likeBoard = likeRepository.findByMemberAndBoard(member, board);
+
+        if (likeBoard.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        likeRepository.deleteById(likeBoard.get().getLikeId());
     }
 
     @Transactional
