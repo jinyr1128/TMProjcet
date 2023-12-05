@@ -2,6 +2,8 @@ package com.tmproject.api.like.service;
 
 import com.tmproject.api.board.entity.Board;
 import com.tmproject.api.board.repository.BoardRepository;
+import com.tmproject.api.comment.entity.Comment;
+import com.tmproject.api.comment.repository.CommentRepository;
 import com.tmproject.api.like.dto.LikeBoard;
 import com.tmproject.api.like.entity.Like;
 import com.tmproject.api.like.repository.LikeRepository;
@@ -17,6 +19,7 @@ public class LikeService {
 
     private LikeRepository likeRepository;
     private BoardRepository boardRepository;
+    private CommentRepository commentRepository;
 
     @Transactional
     public void saveBoardLike(Long boardId, Member member) {
@@ -27,7 +30,7 @@ public class LikeService {
     }
 
     @Transactional
-    public void unLikeComment(Long boardId, Member member) {
+    public void unLikeBoard(Long boardId, Member member) {
         Board board = boardRepository.findById(boardId).orElseThrow();
         Optional<Like> likeBoard = likeRepository.findByMemberAndBoard(member, board);
 
@@ -39,9 +42,26 @@ public class LikeService {
     }
 
     @Transactional
-    public Optional<Like> findByMemberAndBoard(Member member, Board board) {
-        return likeRepository.findByMemberAndBoard(member, board);
+    public void saveCommentLike(Long boardId, Member member) {
+        Comment comment = commentRepository.findById(boardId).orElseThrow();
+        Like likeBoard = Like.likeComment(member, comment);
+
+        likeRepository.save(likeBoard);
     }
+
+    @Transactional
+    public void unLikeComment(Long boardId, Member member) {
+        Comment comment = commentRepository.findById(boardId).orElseThrow();
+        Optional<Like> likeComment = likeRepository.findByMemberAndComment(member, comment);
+
+        if (likeComment.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        likeRepository.deleteById(likeComment.get().getLikeId());
+    }
+
+
 
 
 

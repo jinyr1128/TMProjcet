@@ -45,5 +45,11 @@ public class Like {
             .board(board)
             .build();
     }
+    public static Like likeComment(Member member, Comment comment) {
+        return Like.builder()
+            .member(member)
+            .comment(comment)
+            .build();
+    }
 
 }

@@ -23,7 +23,7 @@ public class likeController {
     private LikeService likeService;
 
     @PostMapping("/member/boards/{boardId}/like")
-    public ResponseEntity<?> likeComment (
+    public ResponseEntity<?> likeBoard (
         @AuthenticationPrincipal MemberDetailsImpl memberDetails,
         @PathVariable Long boardId
     ) {
@@ -33,13 +33,33 @@ public class likeController {
     }
 
     @DeleteMapping("/member/boards/{boardId}/like")
-    public ResponseEntity<?> unLikeComment (
+    public ResponseEntity<?> unLikeBoard (
         @AuthenticationPrincipal MemberDetailsImpl memberDetails,
         @PathVariable Long boardId
     ) {
         Member member = memberDetails.getMember();
-        likeService.unLikeComment(boardId, member);
+        likeService.unLikeBoard(boardId, member);
         return ResponseEntity.ok("게시글 좋아요 취소 성공");
+    }
+
+    @PostMapping("/member/comments/{commentId}/like")
+    public ResponseEntity<?> likeComment (
+        @AuthenticationPrincipal MemberDetailsImpl memberDetails,
+        @PathVariable Long commentId
+    ) {
+        Member member = memberDetails.getMember();
+        likeService.saveCommentLike(commentId, member);
+        return ResponseEntity.ok("댓글 좋아요 요청 성공");
+    }
+
+    @DeleteMapping("/member/comments/{commentId}/like")
+    public ResponseEntity<?> unLikeComment (
+        @AuthenticationPrincipal MemberDetailsImpl memberDetails,
+        @PathVariable Long commentId
+    ) {
+        Member member = memberDetails.getMember();
+        likeService.unLikeComment(commentId, member);
+        return ResponseEntity.ok("댓글 좋아요 취소 성공");
     }
 
 
