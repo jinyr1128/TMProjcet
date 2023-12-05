@@ -48,8 +48,8 @@ public class BoardService {
         if (!board.getMember().getUsername().equals(getCurrentUsername())) {
             throw new IllegalArgumentException("권한이 없습니다.");
         }
-        board.setTitle(requestDto.getTitle());
-        board.setContent(requestDto.getContent());
+        board.setTitle(requestDto.title());
+        board.setContent(requestDto.content());
         boardRepository.save(board);
         return new BoardResponseDto("게시글 수정 성공", 200, board);
     }
