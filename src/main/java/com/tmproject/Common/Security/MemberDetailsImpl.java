@@ -19,6 +19,10 @@ public class MemberDetailsImpl implements UserDetails {
         this.member = member;
     }
 
+    public Member getMember(){
+        return this.member;
+    }
+
     @Override
     public String getUsername(){
         return this.member.getUsername();
