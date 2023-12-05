@@ -8,14 +8,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-// 응답 값으로 파싱이 될 때, 변환이 될 때 JSON 형태로 변환이 되는데 그 때 non_null인 값들만 반환!!
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponseDto {
+@JsonInclude(JsonInclude.Include.NON_NULL) // null이 아닌 필드만 JSON에 포함
+public class ApiResponseDto<T> {
     private String msg;
     private Integer statusCode;
+    private T data; // 일반화된 데이터 필드
 
-    public ApiResponseDto(String msg, Integer statusCode) {
+    public ApiResponseDto(String msg, Integer statusCode, T data) {
         this.msg = msg;
         this.statusCode = statusCode;
+        this.data = data;
     }
 }
