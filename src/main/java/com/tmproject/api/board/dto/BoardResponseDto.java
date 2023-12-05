@@ -1,9 +1,16 @@
 package com.tmproject.api.board.dto;
+
 public class BoardResponseDto {
 
     private String message;
     private int statusCode;
     private Object data;
+
+    public BoardResponseDto(String message, int statusCode, Object data) {
+        this.message = message;
+        this.statusCode = statusCode;
+        this.data = data;
+    }
 
     public String getMessage() {
         return message;
@@ -29,4 +36,3 @@ public class BoardResponseDto {
         this.data = data;
     }
 }
-
