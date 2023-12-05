@@ -1,6 +1,7 @@
 package com.tmproject.api.board.dto;
 
 import com.tmproject.api.board.entity.Board;
+
 import java.util.List;
 
 public class BoardListDto {

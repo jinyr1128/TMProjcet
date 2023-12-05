@@ -1,13 +1,13 @@
 package com.tmproject.api.board.service;
 
+import com.tmproject.api.board.dto.BoardListDto;
 import com.tmproject.api.board.dto.BoardRequestDto;
 import com.tmproject.api.board.dto.BoardResponseDto;
-import com.tmproject.api.board.dto.BoardListDto;
 import com.tmproject.api.board.entity.Board;
-import com.tmproject.api.member.entity.Member;
-import com.tmproject.api.board.repository.BoardRepository;
-import com.tmproject.api.member.repository.MemberRepository;
 import com.tmproject.api.board.exception.BoardNotFoundException;
+import com.tmproject.api.board.repository.BoardRepository;
+import com.tmproject.api.member.entity.Member;
+import com.tmproject.api.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

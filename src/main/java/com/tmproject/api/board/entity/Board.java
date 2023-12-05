@@ -3,11 +3,7 @@ package com.tmproject.api.board.entity;
 import com.tmproject.api.member.entity.Member;
 import com.tmproject.global.common.Timestamped;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
