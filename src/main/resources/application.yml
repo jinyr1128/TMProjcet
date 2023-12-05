@@ -7,11 +7,11 @@ spring:
     defer-datasource-initialization: true
   datasource:
     url: jdbc:mysql://localhost:3306/menu
-    username: pjh
-    password: 1234
+    username: ${your_username}
+    password: ${your_password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   h2:
     console:
       enabled: true
 jwt:
-  secret_key: 7Iqk7YyM66W07YOA7L2U65Sp7YG065+9U3ByaW5n6rCV7J2Y7Yqc7YSw7LWc7JuQ67mI7J6F64uI64ukLg==
+  secret_key: ${jwt.secret_key}
