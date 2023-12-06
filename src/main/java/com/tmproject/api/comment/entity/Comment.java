@@ -1,6 +1,7 @@
-package com.tmproject.api.board.entity;
+package com.tmproject.api.comment.entity;
 
 import com.tmproject.api.member.entity.Member;
+import com.tmproject.api.board.entity.Board;
 import com.tmproject.global.common.Timestamped;
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,18 +12,21 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Board extends Timestamped {
+public class Comment extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
-    private Member member; //
+    private Member member; // 댓글 작성자
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id")
+    private Board board; // 댓글이 달린 게시물
 
     public Long getId() {
         return id;
@@ -30,14 +34,6 @@ public class Board extends Timestamped {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getContent() {
@@ -54,5 +50,13 @@ public class Board extends Timestamped {
 
     public void setMember(Member member) {
         this.member = member;
+    }
+
+    public Board getBoard() {
+        return board;
+    }
+
+    public void setBoard(Board board) {
+        this.board = board;
     }
 }

@@ -2,17 +2,16 @@ package com.tmproject.api.member.entity;
 
 import com.tmproject.api.member.dto.ProfileRequestDto;
 import com.tmproject.global.common.Timestamped;
+
 import jakarta.persistence.*;
-
 import javax.print.attribute.standard.PrinterURI;
-
 import jakarta.validation.constraints.NotBlank;
+
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
