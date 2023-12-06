@@ -26,6 +26,7 @@ public class KakaoController {
         Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7));
         cookie.setPath("/");
         response.addCookie(cookie);
+        //
         return "redirect:/";
     }
 }
