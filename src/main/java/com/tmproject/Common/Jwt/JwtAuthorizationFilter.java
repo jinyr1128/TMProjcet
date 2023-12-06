@@ -60,13 +60,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         Authentication authentication = createAuthentication(username);
         context.setAuthentication(authentication);
 
-        SecurityContextHolder.setContext(context);
-    }
+            SecurityContextHolder.setContext(context);
+        }
 
     // 인증 객체 생성
     private Authentication createAuthentication(String username) {
         log.info("createAuthentication()");
         UserDetails userDetails = memberDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }

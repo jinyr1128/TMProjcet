@@ -4,6 +4,7 @@ import com.tmproject.Common.Security.MemberDetailsImpl;
 import com.tmproject.api.member.dto.ProfileResponseDto;
 import com.tmproject.api.member.dto.ProfileUpdateRequestDto;
 import com.tmproject.api.member.dto.SignupRequestDto;
+import com.tmproject.api.member.entity.Member;
 import com.tmproject.api.member.service.MemberService;
 import com.tmproject.global.common.ApiResponseDto;
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ public class MemberController {
             }
         }
         ApiResponseDto<?> apiResponseDto = memberService.signup(requestDto);
-        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
         // SignupDto 제약 조건 확인
     }
 
@@ -41,9 +42,10 @@ public class MemberController {
     @PutMapping("/profile/{memberId}")
     public ResponseEntity<ApiResponseDto<?>> updateProfile(
             @PathVariable long memberId,
-            @RequestBody ProfileUpdateRequestDto requestDto){
-        ApiResponseDto<?> apiResponseDto = memberService.updateMember(memberId, requestDto);
-        return new ResponseEntity<>(apiResponseDto , HttpStatus.OK);
+            @RequestBody ProfileUpdateRequestDto requestDto,
+            @AuthenticationPrincipal MemberDetailsImpl memberDetails){
+        ApiResponseDto<?> apiResponseDto = memberService.updateMember(memberId, requestDto, memberDetails);
+        return new ResponseEntity<>(apiResponseDto , HttpStatus.valueOf(apiResponseDto.getStatusCode()));
     }
 
     @PutMapping("/profile/{memberId}/profileImageUrl")
@@ -52,14 +54,15 @@ public class MemberController {
             @RequestPart MultipartFile profileImage,
             @AuthenticationPrincipal MemberDetailsImpl memberDetails){
         ApiResponseDto<?> apiResponseDto = memberService.updateMemberProfileImage(memberId, profileImage, memberDetails);
-        return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
     }
 
     @GetMapping("/profile/{memberId}")
     public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getMemberInfo(
-            @PathVariable long memberId){
-        ApiResponseDto<ProfileResponseDto> responseDto = memberService.getMemberInfo(memberId);
-        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+            @PathVariable long memberId,
+            @AuthenticationPrincipal MemberDetailsImpl memberDetails){
+        ApiResponseDto<ProfileResponseDto> apiResponseDto = memberService.getMemberInfo(memberId, memberDetails);
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
     }
     // 자기 자신의 정보를 확인할 수 있는 메서드
     // 자기 자신이 아닌 다른 사람도 확인이 가능해야함
