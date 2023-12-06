@@ -42,17 +42,6 @@ public class MemberController {
         // SignupDto 제약 조건 확인
     }
 
-    /*@ResponseBody
-    @GetMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null) {
-            new SecurityContextLogoutHandler().logout(request, response, auth);
-        }
-        return ResponseEntity.ok("로그아웃이 완료되었습니다.");
-    }*/
-    // 이거 일단 안됨
-
     @ResponseBody
     @PutMapping("/profile/{memberId}")
     public ResponseEntity<ApiResponseDto<?>> updateProfile(
