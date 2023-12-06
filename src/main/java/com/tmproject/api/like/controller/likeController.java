@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class likeController {
 
-    private LikeService likeService;
+    private final LikeService likeService;
 
     @PostMapping("/member/boards/{boardId}/like")
     public ResponseEntity<?> likeBoard (

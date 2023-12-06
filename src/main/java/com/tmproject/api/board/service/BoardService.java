@@ -3,12 +3,17 @@ package com.tmproject.api.board.service;
 import com.tmproject.api.board.dto.BoardListDto;
 import com.tmproject.api.board.dto.BoardRequestDto;
 import com.tmproject.api.board.dto.BoardResponseDto;
+import com.tmproject.api.board.dto.BoardViewResponseDto;
 import com.tmproject.api.board.entity.Board;
 import com.tmproject.api.board.exception.BoardNotFoundException;
 import com.tmproject.api.board.repository.BoardRepository;
 import com.tmproject.api.member.entity.Member;
 import com.tmproject.api.member.repository.MemberRepository;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -72,5 +77,11 @@ public class BoardService {
         return memberRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
+
+    public List<BoardViewResponseDto> getFollowersBoards(Long memberId, Pageable pageable) {
+        List<Board> boards = boardRepository.findAllUserFollowerBoard(memberId, pageable).getContent();
+        return boards.stream().map(BoardViewResponseDto::from).toList();
+    }
+
 }
 
