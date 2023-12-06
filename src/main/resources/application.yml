@@ -15,6 +15,7 @@ spring:
   h2:
     console:
       enabled: true
+
 jwt:
   secret_key: ${jwt.secret_key}
 
@@ -24,3 +25,8 @@ admin:
 
 file:
   path: ./upload/
+
+kakao:
+  oauth: ${kakao.oauth}
+
+
