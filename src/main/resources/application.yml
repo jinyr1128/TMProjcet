@@ -23,4 +23,4 @@ admin:
   password : ${admin.password}
 
 file:
-  path: C:\Users\user\intellij-workspace\TMProjcet\upload
+  path: ./upload/

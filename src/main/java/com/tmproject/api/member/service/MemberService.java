@@ -82,7 +82,7 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateMember(long memberId, ProfileRequestDto requestDto, MemberDetailsImpl memberDetails){
+    public void updateMember(long memberId, ProfileRequestDto requestDto){
         Member memberEntity = memberRepository.findById(memberId).orElseThrow(
                 ()-> new IllegalArgumentException("해당 id는 존재하지 않습니다.")
         );
@@ -104,12 +104,12 @@ public class MemberService {
 
     public void updateMemberProfileImage(long memberId, MultipartFile imageFile, MemberDetailsImpl memberDetails) {
         UUID uuid = UUID.randomUUID();
-
+        // image파일 이름의 중복을 방지하기 위해 uuid사용
         String uuidImage = uuid+"_"+imageFile.getOriginalFilename();
 
-        log.info(uuidImage);
-
-        Path imageFilePath = Paths.get(uploadFolder+imageFile);
+        log.info("uuidImage : "+uuidImage);
+        // db에서 저장되는 uuid형식
+        Path imageFilePath = Paths.get(uploadFolder+uuidImage);
 
         try {
             Files.write(imageFilePath, imageFile.getBytes());
@@ -118,11 +118,12 @@ public class MemberService {
         }
 
         Member memberEntity = memberRepository.findById(memberId).orElseThrow(
-                ()-> new IllegalArgumentException("해당 아이디는 존재하지 않습니다.")
+                ()-> new IllegalArgumentException("해당 유저는 존재하지 않습니다.")
         );
         String testImageFilePath = imageFilePath.toString();
         log.info("testImageFilePath : "+testImageFilePath);
-        memberEntity.updateProfileImageUrl(testImageFilePath);
+
+        memberEntity.updateProfileImageUrl(uuidImage);
         memberRepository.save(memberEntity);
     }
 }
