@@ -1,11 +1,13 @@
 package com.tmproject.api.member.service;
 
 import com.tmproject.Common.Security.MemberDetailsImpl;
-import com.tmproject.api.member.dto.ProfileRequestDto;
+import com.tmproject.api.member.dto.ProfileResponseDto;
+import com.tmproject.api.member.dto.ProfileUpdateRequestDto;
 import com.tmproject.api.member.dto.SignupRequestDto;
 import com.tmproject.api.member.entity.Member;
 import com.tmproject.api.member.entity.MemberRoleEnum;
 import com.tmproject.api.member.repository.MemberRepository;
+import com.tmproject.global.common.ApiResponseDto;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,7 +58,7 @@ public class MemberService {
         }
     }
 
-    public void signup(SignupRequestDto requestDto){
+    public ApiResponseDto<?> signup(SignupRequestDto requestDto){
         String username = requestDto.getUsername();
 
         Optional<Member> checkUsername = memberRepository.findByUsername(username);
@@ -79,10 +81,11 @@ public class MemberService {
                 .build();
 
         memberRepository.save(member);
+        return new ApiResponseDto("회원 가입 성공",200,null);
     }
 
     @Transactional
-    public void updateMember(long memberId, ProfileRequestDto requestDto){
+    public ApiResponseDto<?> updateMember(long memberId, ProfileUpdateRequestDto requestDto){
         Member memberEntity = memberRepository.findById(memberId).orElseThrow(
                 ()-> new IllegalArgumentException("해당 id는 존재하지 않습니다.")
         );
@@ -98,11 +101,16 @@ public class MemberService {
 
         String encodedPassowrd = passwordEncoder.encode(requestDto.getPassword());
 
+        // 최근 3번안에 사용한 비밀번호는 사용할 수 없도록 제한합니다.
+        // 해당 사항 만들기
+
         memberEntity.update(requestDto, encodedPassowrd);
         memberRepository.save(memberEntity);
+        return new ApiResponseDto<>("유저 프로필 수정 성공",200,null);
     }
 
-    public void updateMemberProfileImage(long memberId, MultipartFile imageFile, MemberDetailsImpl memberDetails) {
+    @Transactional
+    public ApiResponseDto<?> updateMemberProfileImage(long memberId, MultipartFile imageFile, MemberDetailsImpl memberDetails) {
         UUID uuid = UUID.randomUUID();
         // image파일 이름의 중복을 방지하기 위해 uuid사용
         String uuidImage = uuid+"_"+imageFile.getOriginalFilename();
@@ -125,5 +133,16 @@ public class MemberService {
 
         memberEntity.updateProfileImageUrl(uuidImage);
         memberRepository.save(memberEntity);
+        return new ApiResponseDto<>("회원 프로필 사진 변경 성공",200,null);
+    }
+
+    public ApiResponseDto<ProfileResponseDto> getMemberInfo(long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+                ()-> new IllegalArgumentException("해당하는 Member Id는 존재하지 않습니다.")
+        );
+        ProfileResponseDto profileResponseDto = new ProfileResponseDto(member.getUsername(), member.getIntroduction());
+        log.info("profileResponseDto.getUsername() : "+profileResponseDto.getUsername());
+        log.info("profileResponseDto.getIntroduction() : "+profileResponseDto.getIntroduction());
+        return new ApiResponseDto<>("해당 유저 정보 조회 성공",200, profileResponseDto);
     }
 }

@@ -1,6 +1,7 @@
 package com.tmproject.api.member.entity;
 
-import com.tmproject.api.member.dto.ProfileRequestDto;
+import com.tmproject.api.member.dto.ProfileResponseDto;
+import com.tmproject.api.member.dto.ProfileUpdateRequestDto;
 import com.tmproject.global.common.Timestamped;
 import jakarta.persistence.*;
 
@@ -55,7 +56,7 @@ public class Member extends Timestamped {
         this.role = role;
         // 기본 정보 저장
     }
-    public void update(ProfileRequestDto profileRequestDto, String encodedPassowrd){
+    public void update(ProfileUpdateRequestDto profileRequestDto, String encodedPassowrd){
         this.username = profileRequestDto.getUsername();
         this.password = encodedPassowrd;
         this.email = profileRequestDto.getEmail();
@@ -65,7 +66,6 @@ public class Member extends Timestamped {
 
     public void updateProfileImageUrl(String profileImageUrl){
         this.profileImageUrl = profileImageUrl;
-        // 이거 임시일듯? 잠시,,, 테스트좀 해봐야해
     }
-    // 따로 이미지파일url 변경 로직도 필요할듯?
+
 }
