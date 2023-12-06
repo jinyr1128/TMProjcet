@@ -7,6 +7,7 @@ import com.tmproject.api.board.entity.Board;
 import com.tmproject.api.board.exception.BoardNotFoundException;
 import com.tmproject.api.board.repository.BoardRepository;
 import com.tmproject.api.member.entity.Member;
+import com.tmproject.api.member.entity.MemberRoleEnum;
 import com.tmproject.api.member.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,9 +49,10 @@ class BoardServiceTest {
     @DisplayName("게시글 생성 성공 테스트")
     void createBoard_Success() {
         // Given: Mock 객체와 상황 설정
+        Member testMember = new Member("testUser", "password123", "test@example.com", MemberRoleEnum.USER);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getName()).thenReturn("testUser");
-        when(memberRepository.findByUsername("testUser")).thenReturn(Optional.of(new Member()));
+        when(memberRepository.findByUsername("testUser")).thenReturn(Optional.of(testMember));
         when(boardRepository.save(any(Board.class))).thenAnswer(i -> i.getArguments()[0]);
         SecurityContextHolder.setContext(securityContext);
 
@@ -117,7 +119,7 @@ class BoardServiceTest {
     @DisplayName("게시글 수정 성공 테스트")
     void updateBoard_Success() {
         // Given
-        Member mockMember = new Member("testUser", "password123", "test@example.com");
+        Member mockMember = new Member("testUser", "password123", "test@example.com", MemberRoleEnum.USER);
         Board mockBoard = new Board();
         mockBoard.setMember(mockMember);
         when(boardRepository.findById(1L)).thenReturn(Optional.of(mockBoard));
@@ -143,7 +145,7 @@ class BoardServiceTest {
     @DisplayName("게시글 삭제 성공 테스트")
     void deleteBoard_Success() {
         // Given
-        Member mockMember = new Member("testUser", "password123", "test@example.com");
+        Member mockMember = new Member("testUser", "password123", "test@example.com", MemberRoleEnum.USER);
         Board mockBoard = new Board();
         mockBoard.setMember(mockMember);
         when(boardRepository.findById(1L)).thenReturn(Optional.of(mockBoard));
