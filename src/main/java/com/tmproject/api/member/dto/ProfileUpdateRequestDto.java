@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 @Getter
-public class ProfileRequestDto {
+public class ProfileUpdateRequestDto {
 
     @NotBlank
     private String username;

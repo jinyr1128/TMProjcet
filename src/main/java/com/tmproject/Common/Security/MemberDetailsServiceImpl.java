@@ -1,5 +1,6 @@
 package com.tmproject.Common.Security;
 
+
 import com.tmproject.api.member.entity.Member;
 import com.tmproject.api.member.repository.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,10 +17,11 @@ public class MemberDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByUsername(username).orElseThrow(
-                ()-> new UsernameNotFoundException("해당 유저 네임을 찾을 수 없습니다.")
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        Member member = memberRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail).orElseThrow(
+                () -> new UsernameNotFoundException("Not Found " + usernameOrEmail)
         );
+
         return new MemberDetailsImpl(member);
     }
 }

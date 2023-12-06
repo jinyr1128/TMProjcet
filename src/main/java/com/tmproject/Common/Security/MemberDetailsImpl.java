@@ -3,6 +3,7 @@ package com.tmproject.Common.Security;
 
 import com.tmproject.api.member.entity.Member;
 import com.tmproject.api.member.entity.MemberRoleEnum;
+import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@Builder
 public class MemberDetailsImpl implements UserDetails {
 
     private Member member;
