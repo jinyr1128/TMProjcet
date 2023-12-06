@@ -62,19 +62,20 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/api/member/login").permitAll()
-                        .requestMatchers("/api/member/signup").permitAll() // api/member/login || signup 페이지 접근 허가
+                        .requestMatchers("/api/member/signup").permitAll()
+                        .requestMatchers("/api/member/loginPage").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
         http.formLogin((formLogin) ->
                 formLogin
-                        .loginPage("/api/user/login").permitAll()
+                        .loginPage("/api/member/loginPage").permitAll()
+                // loginPage 임시 지정
         );
 
         // 필터 관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        // 인가 필터 -> 인증 필터 -> UsernamePasswordAuthenticationToken(username, password, role)
         return http.build();
     }
 }

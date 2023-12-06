@@ -5,7 +5,6 @@ import com.tmproject.Common.Security.MemberDetailsImpl;
 import com.tmproject.api.member.dto.LoginRequestDto;
 import com.tmproject.api.member.entity.MemberRoleEnum;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -16,50 +15,49 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 
-@Slf4j(topic = "JwtAuthenticationFilter 관련 로그")
+@Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil){
+    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
         setFilterProcessesUrl("/api/member/login");
-        // login process -> /api/member/login
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        log.info("로그인 시도");
+        log.info("attemptAuthentication()");
         try {
-            LoginRequestDto loginDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
-            log.info("loginDto.getUsername() : "+loginDto.getUsername()+" || loginDto.getPassword() : "+loginDto.getPassword());
+            LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
+
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginDto.getUsername(),
-                            loginDto.getPassword(),
+                            requestDto.getUsername(),
+                            requestDto.getPassword(),
                             null
                     )
-                    // 권한 null로 지정, 추후 변경 가능성 있음
             );
-        }catch(Exception e){
+        } catch (IOException e) {
             log.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
 
-    // 인증 성공(로그인 성공) 시 동작하는 메서드
-    // JWT 생성 및 client에 응답
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
-        log.info("로그인 성공 및 JWT 생성");
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
+        log.info("successfulAuthentication()");
         String username = ((MemberDetailsImpl) authResult.getPrincipal()).getUsername();
         MemberRoleEnum role = ((MemberDetailsImpl) authResult.getPrincipal()).getMember().getRole();
+
         String token = jwtUtil.createToken(username, role);
+        log.info(token);
+        // 토큰 요청할 때 잘못 보내는거 같음,
         response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
     }
 
-    //인증 실패(로그인 실패)시 동작하는 메서드
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         response.setStatus(401);
     }
+
 }

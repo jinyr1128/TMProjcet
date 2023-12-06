@@ -14,21 +14,20 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 
+@Slf4j
 @Component
-@Slf4j(topic = "JwtUtil log")
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    // 인가 헤더
     public static final String AUTHORIZATION_KEY = "auth";
+
     public static final String BEARER_PREFIX = "Bearer ";
-    private final long TOKEN_TIME = 240 * 60 * 1000L;
-    // 임시로 240분 부여
 
-    // ACCESS_TOKEN & REFRESH_TOKEN 사용할지? 안할지? 모름
+    private static final long TOKEN_TIME = 60 * 60 * 1000L;
+    // 1시간
+
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-    // 시그니처
 
-    @Value("${jwt.secret_key}") // Base64 Encode 한 SecretKey
+    @Value("${jwt.secret_key}")
     private String secretKey;
 
     private Key key;
@@ -41,12 +40,12 @@ public class JwtUtil {
     }
 
     public String createToken(String username, MemberRoleEnum role){
-        log.info("createToken() start");
+        log.info("토큰 생성");
         Date date = new Date();
         return BEARER_PREFIX + Jwts.builder()
                 .setSubject(username)
                 .claim(AUTHORIZATION_KEY,role)
-                .setExpiration(new Date(date.getTime()))
+                .setExpiration(new Date(date.getTime()+TOKEN_TIME))
                 .setIssuedAt(date)
                 .signWith(key, signatureAlgorithm)
                 .compact();
