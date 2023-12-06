@@ -43,113 +43,128 @@ class BoardServiceTest {
     @Mock
     private Authentication authentication;
 
-
+    // 게시글 생성 성공 테스트
     @Test
     @DisplayName("게시글 생성 성공 테스트")
     void createBoard_Success() {
-        // Mocking
+        // Given: Mock 객체와 상황 설정
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getName()).thenReturn("testUser");
         when(memberRepository.findByUsername("testUser")).thenReturn(Optional.of(new Member()));
         when(boardRepository.save(any(Board.class))).thenAnswer(i -> i.getArguments()[0]);
-
         SecurityContextHolder.setContext(securityContext);
 
         BoardRequestDto requestDto = new BoardRequestDto("Title", "Content");
+
+        // When: 테스트 대상 메서드 실행
         BoardResponseDto<Board> response = boardService.createBoard(requestDto);
 
+        // Then: 결과 검증
         assertEquals("게시글 작성 성공", response.getMsg());
         assertEquals(201, response.getStatusCode());
         assertNotNull(response.getData());
     }
+
+    // 전체 게시글 조회 성공 테스트
     @Test
     @DisplayName("전체 게시글 조회 성공 테스트")
     void getAllBoards_Success() {
+        // Given
         List<Board> mockBoards = Arrays.asList(new Board(), new Board());
         when(boardRepository.findAll()).thenReturn(mockBoards);
 
+        // When
         BoardListDto response = boardService.getAllBoards();
 
+        // Then
         assertEquals("전체 게시글 조회 성공", response.getMessage());
         assertEquals(200, response.getStatusCode());
         assertEquals(2, response.getBoards().size());
     }
+
+    // 게시글 조회 성공 테스트
     @Test
     @DisplayName("게시글 조회 성공 테스트")
     void getBoard_Success() {
+        // Given
         Board mockBoard = new Board();
         when(boardRepository.findById(1L)).thenReturn(Optional.of(mockBoard));
 
+        // When
         BoardResponseDto<Board> response = boardService.getBoard(1L);
 
-
-
+        // Then
         assertEquals("게시글 조회 성공", response.getMsg());
         assertEquals(200, response.getStatusCode());
         assertNotNull(response.getData());
     }
 
+    // 존재하지 않는 게시글 조회 시 예외 발생 테스트
     @Test
     @DisplayName("존재하지 않는 게시글 조회 시 예외 발생 테스트")
     void getBoard_NotFound() {
+        // Given
         when(boardRepository.findById(1L)).thenReturn(Optional.empty());
 
+        // When & Then: 예외 발생 검증
         assertThrows(BoardNotFoundException.class, () -> {
             boardService.getBoard(1L);
         });
     }
+
+    // 게시글 수정 성공 테스트
     @Test
     @DisplayName("게시글 수정 성공 테스트")
     void updateBoard_Success() {
-        // Member 객체 생성
+        // Given
         Member mockMember = new Member("testUser", "password123", "test@example.com");
-
-        // Board 객체에 Member 설정
         Board mockBoard = new Board();
         mockBoard.setMember(mockMember);
         when(boardRepository.findById(1L)).thenReturn(Optional.of(mockBoard));
         when(boardRepository.save(any(Board.class))).thenAnswer(i -> i.getArguments()[0]);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getName()).thenReturn("testUser");
-
         SecurityContextHolder.setContext(securityContext);
-
         BoardRequestDto requestDto = new BoardRequestDto("Updated Title", "Updated Content");
+
+        // When
         BoardResponseDto<Board> response = boardService.updateBoard(1L, requestDto);
 
+        // Then
         assertEquals("게시글 수정 성공", response.getMsg());
         assertEquals(200, response.getStatusCode());
         assertNotNull(response.getData());
         assertEquals("Updated Title", response.getData().getTitle());
         assertEquals("Updated Content", response.getData().getContent());
     }
+
+    // 게시글 삭제 성공 테스트
     @Test
     @DisplayName("게시글 삭제 성공 테스트")
     void deleteBoard_Success() {
-        // Member 객체 생성
+        // Given
         Member mockMember = new Member("testUser", "password123", "test@example.com");
-
-        // Board 객체에 Member 설정
         Board mockBoard = new Board();
         mockBoard.setMember(mockMember);
-
         when(boardRepository.findById(1L)).thenReturn(Optional.of(mockBoard));
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getName()).thenReturn("testUser");
-
         SecurityContextHolder.setContext(securityContext);
 
+        // When & Then: 예외 발생이 없는지 검증
         assertDoesNotThrow(() -> boardService.deleteBoard(1L));
     }
 
+    // 존재하지 않는 게시글 삭제 시 예외 발생 테스트
     @Test
     @DisplayName("존재하지 않는 게시글 삭제 시 예외 발생 테스트")
     void deleteBoard_NotFound() {
+        // Given
         when(boardRepository.findById(1L)).thenReturn(Optional.empty());
 
+        // When & Then: 예외 발생 검증
         assertThrows(BoardNotFoundException.class, () -> {
             boardService.deleteBoard(1L);
         });
     }
-
 }
