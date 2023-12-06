@@ -17,3 +17,10 @@ spring:
       enabled: true
 jwt:
   secret_key: ${jwt.secret_key}
+
+admin:
+  username : ${admin.username}
+  password : ${admin.password}
+
+file:
+  path: C:\Users\user\intellij-workspace\TMProjcet\upload
