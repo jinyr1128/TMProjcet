@@ -4,6 +4,7 @@ import com.tmproject.Common.Security.MemberDetailsImpl;
 import com.tmproject.api.member.dto.ProfileRequestDto;
 import com.tmproject.api.member.dto.SignupRequestDto;
 import com.tmproject.api.member.service.MemberService;
+import com.tmproject.global.common.ApiResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +35,27 @@ public class MemberController {
         return "redirect:/api/member/login";
     }
 
-    /*@PutMapping("/profile/{memberId}")
+    @ResponseBody
+    @PutMapping("/profile/{memberId}")
     public ResponseEntity<?> updateProfile(
             @PathVariable long memberId,
             @RequestBody ProfileRequestDto requestDto,
-            @RequestParam("profileImage") MultipartFile profileImageFile,
+            @AuthenticationPrincipal MemberDetailsImpl memberDetails
+            //@RequestParam("profileImage") MultipartFile profileImageFile
+            ){
+        log.info("일로 안들어 오는데?");
+            memberService.updateMember(memberId, requestDto, memberDetails);
+
+        return new ResponseEntity<>(new ApiResponseDto<>("프로필 사진 업데이트 성공", 200, null), HttpStatus.OK);
+    }
+
+    @PutMapping("/profile/{memberId}/profileImageUrl")
+    public ResponseEntity<?> updateProfileImage(
+            @PathVariable long memberId,
+            @RequestPart MultipartFile profileImage,
             @AuthenticationPrincipal MemberDetailsImpl memberDetails){
-            memberService.updateMember(memberId, requestDto, memberDetails, profileImageFile);
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }*/
+        memberService.updateMemberProfileImage(memberId, profileImage, memberDetails);
+        return new ResponseEntity<>(new ApiResponseDto<>("회원 프로필 사진 변경 성공",200,null),HttpStatus.OK);
+    }
+
 }

@@ -81,19 +81,13 @@ public class MemberService {
         memberRepository.save(member);
     }
 
-    /*@Transactional
-    public void updateMember(long memberId, ProfileRequestDto requestDto, MemberDetailsImpl memberDetails, MultipartFile profileImageFile){
-        Member loginMember = memberDetails.getMember();
-
+    @Transactional
+    public void updateMember(long memberId, ProfileRequestDto requestDto, MemberDetailsImpl memberDetails){
         Member memberEntity = memberRepository.findById(memberId).orElseThrow(
                 ()-> new IllegalArgumentException("해당 id는 존재하지 않습니다.")
         );
 
-        if(passwordEncoder.matches(requestDto.getPassword(), loginMember.getPassword())){
-            throw new IllegalArgumentException("현재 비밀번호는 일치하지 않습니다.");
-        }
-
-        if(requestDto.getPasswordConfirm().equals(requestDto.getPassword())){
+        if(!requestDto.getPasswordConfirm().equals(requestDto.getPassword())){
             throw new IllegalArgumentException("1차 비밀번호와 2차 비밀번호가 다릅니다.");
         }
 
@@ -102,21 +96,33 @@ public class MemberService {
         }
         // 이메일 중복 검증
 
-        UUID uuid = UUID.randomUUID();
-        String uuidImageName = uuid+"_"+profileImageFile.getOriginalFilename();
-        log.info("uuidImageName : "+uuidImageName);
+        String encodedPassowrd = passwordEncoder.encode(requestDto.getPassword());
 
-        Path imageFilePath = Paths.get(uploadFolder+profileImageFile);
+        memberEntity.update(requestDto, encodedPassowrd);
+        memberRepository.save(memberEntity);
+    }
+
+    public void updateMemberProfileImage(long memberId, MultipartFile imageFile, MemberDetailsImpl memberDetails) {
+        UUID uuid = UUID.randomUUID();
+
+        String uuidImage = uuid+"_"+imageFile.getOriginalFilename();
+
+        log.info(uuidImage);
+
+        Path imageFilePath = Paths.get(uploadFolder+imageFile);
 
         try {
-            Files.write(imageFilePath, profileImageFile.getBytes());
+            Files.write(imageFilePath, imageFile.getBytes());
         }catch(Exception e) {
             e.printStackTrace();
         }
-        // uuidImageName
 
-        String encodedPassowrd = requestDto.getPassword();
-        memberEntity.update(requestDto, encodedPassowrd, uuidImageName);
+        Member memberEntity = memberRepository.findById(memberId).orElseThrow(
+                ()-> new IllegalArgumentException("해당 아이디는 존재하지 않습니다.")
+        );
+        String testImageFilePath = imageFilePath.toString();
+        log.info("testImageFilePath : "+testImageFilePath);
+        memberEntity.updateProfileImageUrl(testImageFilePath);
         memberRepository.save(memberEntity);
-    }*/
+    }
 }
