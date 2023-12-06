@@ -1,38 +1,17 @@
 package com.tmproject.api.board.dto;
 
-public class BoardResponseDto {
+import com.tmproject.global.common.ApiResponseDto;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-    private String message;
-    private int statusCode;
-    private Object data;
+@Getter
+@Setter
+@NoArgsConstructor
+public class BoardResponseDto<T> extends ApiResponseDto<T> {
 
-    public BoardResponseDto(String message, int statusCode, Object data) {
-        this.message = message;
-        this.statusCode = statusCode;
-        this.data = data;
+    public BoardResponseDto(String msg, Integer statusCode, T data) {
+        super(msg, statusCode, data);
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public int getStatusCode() {
-        return statusCode;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
 }
