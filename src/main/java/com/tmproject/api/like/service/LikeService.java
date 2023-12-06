@@ -17,9 +17,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LikeService {
 
-    private LikeRepository likeRepository;
-    private BoardRepository boardRepository;
-    private CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
+    private final BoardRepository boardRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public void saveBoardLike(Long boardId, Member member) {
