@@ -83,5 +83,10 @@ public class BoardService {
         return boards.stream().map(BoardViewResponseDto::from).toList();
     }
 
+    public List<BoardViewResponseDto> getlikeBoards(Long memberId, Pageable pageable) {
+        List<Board> boards = boardRepository.findAllLikeBoards(memberId, pageable).getContent();
+        return boards.stream().map(BoardViewResponseDto::from).toList();
+    }
+
 }
 

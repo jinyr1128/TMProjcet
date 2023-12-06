@@ -18,5 +18,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     )
     Page<Board> findAllUserFollowerBoard(@Param("memberId") Long memberId, Pageable pageable);
 
+    @EntityGraph(attributePaths = "member")
+    @Query(
+        "select b from Board b where b in " +
+            "(select ubl.board from Like ubl where ubl.member.id = :memberId)"
+    )
+    Page<Board> findAllLikeBoards(@Param("memberId") Long memberId, Pageable pageable);
 }
 

@@ -71,4 +71,13 @@ public class BoardController {
         return ResponseEntity.ok(BoardViewResponseDto);
     }
 
+    @GetMapping("/like-true")
+    public ResponseEntity<List<BoardViewResponseDto>> getLikeBoards(
+        @AuthenticationPrincipal MemberDetailsImpl memberDetails,
+        @PageableDefault(sort = "createdAt") Pageable pageable) {
+        Member member = memberDetails.getMember();
+        List<BoardViewResponseDto> BoardViewResponseDto = boardService.getlikeBoards(member.getId(), pageable);
+
+        return ResponseEntity.ok(BoardViewResponseDto);
+    }
 }
