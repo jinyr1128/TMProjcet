@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>로그인 페이지</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
 
     <style>
@@ -22,18 +22,18 @@
                 <p class="text-white-50 mt-2 mb-5">서비스 사용을 위해 로그인을 해주세요!</p>
 
                 <div class="mb-2">
-                    <a href="/oauth2/authorization/google">
-                        <img src="../static/img/google.png"/>
+                    <a onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id=807257127729-2eg30f8m4cq2ngtm1d6q4o2o68p5q8bm.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/member/google/callback&response_type=code'">
+                        <img src="/images/google.png">
                     </a>
                 </div>
                 <div class="mb-2">
-                    <a href="/oauth2/authorization/naver">
-                        <img src="../static/img/naver.png"/>
+                    <a onclick="location.href='https://nid.naver.com/oauth2.0/authorize?client_id=3jo14itcz2ELeaKj8BPQ&redirect_uri=http://localhost:8080/api/member/naver/callback&response_type=code'">
+                        <img src="/images/naver.png"/>
                     </a>
                 </div>
                 <div class="mb-2">
-                    <a href="/oauth2/authorization/kakao">
-                        <img src="../static/img/kakao.png"/>
+                    <a onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=8bbcb11360f192ffb599e80a0fc3489a&redirect_uri=http://localhost:8080/api/member/kakao/callback&response_type=code'">
+                        <img src="/images/kakao.png"/>
                     </a>
                 </div>
             </div>
