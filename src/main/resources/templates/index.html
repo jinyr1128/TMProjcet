@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>오늘 뭐먹지?</title>
+  <link rel="stylesheet" href="../static/css/stylees.css">
+</head>
+<body>
+<header>
+  <div class="header-group">
+    <div class="logo">
+      <img src="../static/img/logo1.jpeg" alt="Logo" class="logo-image"/>
+    </div>
+    <h1>당신의 메뉴</h1>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#">홈</a></li>
+      <li><a href="#">작성하기</a></li>
+      <li><a href="#">내 프로필</a></li>
+      <li><a href="#">라이브러리</a></li>
+    </ul>
+  </nav>
+  <div class="login-button-container">
+
+      <button id="login-id-btn" onclick="location.href='../templates/oauthLogin.html'">
+          로그인하기
+      </button>
+          <button id="admin-btn" onclick="location.href='/api/user/admin'">
+              관리자페이지
+          </button>
+  </div>
+</header>
+<main>
+  <article>
+   <img src="../static/img/IMG_3258.jpeg"alt="일단 예제 이미지"/>
+    <h2>맛있었었었지</h2>
+    <p>2020년 12월 15일</p>
+    <img src="../static/img/IMG_3258.jpeg"alt="일단 예제 이미지"/>
+    <h2>맛있었었었지</h2>
+    <p>2020년 12월 15일</p>
+  </article>
+</main>
+</body>
+</html>
