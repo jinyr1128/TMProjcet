@@ -41,5 +41,28 @@
     <p>2020년 12월 15일</p>
   </article>
 </main>
+<script>
+    // 게시물 목록을 로드하는 함수
+    function loadBoards() {
+        fetch('/api/member/boards') // API 엔드포인트 URL
+            .then(response => response.json())
+            .then(boards => {
+                const container = document.getElementById('board-container');
+                boards.forEach(board => {
+                    const article = document.createElement('article');
+                    article.innerHTML = `
+            <img src="${board.imageUrl}" alt="${board.title}">
+            <h2>${board.title}</h2>
+            <p>${board.createdAt}</p>
+          `;
+                    container.appendChild(article);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // 페이지 로드 시 게시물 로드 함수 호출
+    window.onload = loadBoards;
+</script>
 </body>
 </html>
