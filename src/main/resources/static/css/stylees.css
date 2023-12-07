@@ -1,0 +1,108 @@
+/* 전체 페이지에 대한 기본 스타일 */
+body {
+    font-family: 'Arial', sans-serif; /* 폰트 설정 */
+    margin: 0;
+    padding: 0;
+    background-color: white; /* 배경색 */
+}
+
+/* 헤더 스타일 */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ccc;
+}
+/* 헤더 내 그룹핑된 로고와 제목 */
+.header-group {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    margin-right: 10px; /* 로고와 제목 사이의 간격 조정 */
+}
+
+.logo-image {
+    max-width: 80px;
+    height: auto;
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0; /* 마진 제거 */
+}
+
+/* 네비게이션 바 (중앙 정렬) */
+.header-center {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin: 0 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+}
+/* 네비게이션 스타일 */
+nav {
+    flex-grow: 2; /* 네비게이션 메뉴가 중앙에 위치하도록 */
+}
+
+/* 로그인 버튼 스타일 */
+.login-button {
+    padding: 10px 20px;
+    background-color: darkgray;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: lightgray;
+}
+
+
+/* 메인 콘텐츠 스타일 */
+main {
+    width: 25%;
+    margin: 20px auto; /* 중앙 정렬을 위한 마진 설정 */
+}
+
+article {
+    margin-bottom: 20px;
+}
+
+/* 기사 이미지 스타일 */
+article img {
+    width: 500px; /* 이미지 너비 고정 */
+    height: 300px; /* 이미지 높이 고정 */
+    object-fit: cover;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+article h2 {
+    font-size: 20px;
+    margin: 5px 0;
+}
+
+article p {
+    font-size: 16px;
+    color: #666;
+}
+
