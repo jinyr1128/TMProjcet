@@ -25,6 +25,9 @@ public class Member extends Timestamped {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private Long kakaoId;
+    private String naverId;
+
     @Column(nullable = false)
     private String username;
     // username은  최소 4자 이상, 10자 이하이며 알파벳 소문자(a~z), 숫자(0~9)로 구성되어야 한다.
@@ -59,6 +62,23 @@ public class Member extends Timestamped {
         this.role = role;
         // 기본 정보 저장
     }
+
+    public Member(String username, String password, String email, MemberRoleEnum role, Long kakaoId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.kakaoId = kakaoId;
+    }
+
+    public Member(String username, String password, String email, MemberRoleEnum role, String naverId) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.naverId = naverId;
+    }
+
     public void update(ProfileUpdateRequestDto profileRequestDto, String encodedPassowrd){
         this.username = profileRequestDto.getUsername();
         this.password = encodedPassowrd;
@@ -71,4 +91,13 @@ public class Member extends Timestamped {
         this.profileImageUrl = profileImageUrl;
     }
 
+    public Member kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
+    }
+
+    public Member naverIdUpdate(String naverId) {
+        this.naverId = naverId;
+        return this;
+    }
 }

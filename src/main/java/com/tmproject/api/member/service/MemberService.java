@@ -192,11 +192,6 @@ public class MemberService {
         log.info("member.getMember().getUsername() : "+ memberDetails.getMember().getUsername());
         log.info("memberDetails.getMember().getUsername().equals(\"root\") && memberDetails.getMember().getId() != 1L" +
                 (memberDetails.getMember().getUsername().equals("root") && memberDetails.getMember().getId() != 1L));
-        /*if(!memberDetails.getMember().getUsername().equals("root") && memberDetails.getMember().getId() != 1L){
-            // 로그인 사용자의 유저네임 : park -> root와 다름 -> true, memberDetails.getMember().getId() != 1L, 로그인한 사용자는 지금 park -> true
-            // 로그인 사용자의 유저네임 : park -> root와 다름 -> true, memberDetails.getMember().getId() != 1L, 로그인한 사용자는 지금 park -> true
-            return new ApiResponseDto<>("해당 유저는 접근 권한이 없습니다.",403,null);
-        }*/
         if(memberDetails.getMember().getId() != 1L && memberId == 1L){
             return new ApiResponseDto<>("해당 유저는 접근 권한이 없습니다.",403,null);
         }

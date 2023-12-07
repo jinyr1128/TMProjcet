@@ -4,7 +4,6 @@ import com.tmproject.Common.Security.MemberDetailsImpl;
 import com.tmproject.api.member.dto.ProfileResponseDto;
 import com.tmproject.api.member.dto.ProfileUpdateRequestDto;
 import com.tmproject.api.member.dto.SignupRequestDto;
-import com.tmproject.api.member.entity.Member;
 import com.tmproject.api.member.service.MemberService;
 import com.tmproject.global.common.ApiResponseDto;
 import jakarta.validation.Valid;

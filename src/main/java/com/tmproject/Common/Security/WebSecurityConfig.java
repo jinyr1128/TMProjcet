@@ -64,6 +64,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/member/login").permitAll()
                         .requestMatchers("/api/member/signup").permitAll()
                         .requestMatchers("/api/member/loginPage").permitAll()
+                        .requestMatchers("/api/member/kakao/callback").permitAll()
+                        .requestMatchers("/api/member/naver/callback").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
