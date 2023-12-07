@@ -27,6 +27,7 @@ public class Member extends Timestamped {
 
     private Long kakaoId;
     private String naverId;
+    private String googleId;
 
     @Column(nullable = false)
     private String username;
@@ -79,6 +80,14 @@ public class Member extends Timestamped {
         this.naverId = naverId;
     }
 
+    // ("GoogleMember", encodedPassword, null, MemberRoleEnum.USER, null, googleUserId);
+    public Member(String username, String password, String email, MemberRoleEnum role, String googleId, String dummyData){
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.role = role;
+        this.googleId = googleId;
+    }
     public void update(ProfileUpdateRequestDto profileRequestDto, String encodedPassowrd){
         this.username = profileRequestDto.getUsername();
         this.password = encodedPassowrd;
