@@ -1,0 +1,207 @@
+/* 전체 페이지에 대한 기본 스타일 */
+body {
+    font-family: 'Arial', sans-serif; /* 폰트 설정 */
+    margin: 0;
+    padding: 0;
+    background-color: white; /* 배경색 */
+}
+
+/* 헤더 스타일 */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ccc;
+}
+/* 헤더 내 그룹핑된 로고와 제목 */
+.header-group {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    margin-right: 10px; /* 로고와 제목 사이의 간격 조정 */
+}
+
+.logo-image {
+    max-width: 80px;
+    height: auto;
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0; /* 마진 제거 */
+}
+
+/* 네비게이션 바 (중앙 정렬) */
+.header-center {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin: 0 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+}
+/* 네비게이션 스타일 */
+nav {
+    flex-grow: 2; /* 네비게이션 메뉴가 중앙에 위치하도록 */
+}
+
+/* 로그인 버튼 스타일 */
+.login-id-btn {
+    padding: 10px 20px;
+    background-color: #A8A8F7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.login-id-btn:hover {
+    background-color: #D1C2E9;
+}
+.admin-btn {
+    padding: 10px 20px;
+    background-color: #A8A8F7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.admin-btn:hover {
+    background-color: #D1C2E9;
+}
+/* 기사 이미지 스타일 */
+.board-image {
+    width: 100%; /* 이미지 너비를 컨테이너에 맞춤 */
+    max-width: 500px; /* 이미지의 최대 너비 제한 */
+    height: auto; /* 이미지 높이를 자동으로 설정하여 원본 비율 유지 */
+    object-fit: contain; /* 이미지가 요소 안에서 비율을 유지하며 표시됨 */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    display: block; /* 이미지를 블록 요소로 만들어 줄 바꿈이 일어나게 함 */
+    margin: 0 auto; /* 상하 마진은 0, 좌우 마진은 자동으로 설정하여 중앙 정렬 */
+}
+/* 게시물 컨테이너 스타일 */
+.board-container {
+    display: flex;
+    flex-direction: column; /* 세로 방향 정렬 */
+    align-items: center; /* 세로축을 기준으로 중앙 정렬 */
+    justify-content: center; /* 가로축을 기준으로 중앙 정렬 */
+    max-width: 700px; /* 컨테이너 최대 너비 */
+    margin: auto; /* 컨테이너를 페이지 중앙에 위치 */
+    padding: 20px; /* 컨테이너 내부 여백 */
+}
+
+/* 기사 제목 및 날짜 스타일 */
+.board-title, .board-date {
+    text-align: center; /* 텍스트 중앙 정렬 */
+    margin-top: 10px; /* 상단 여백 추가 */
+}
+
+/* 기사 내용 스타일 */
+.board-content {
+    text-align: center; /* 텍스트 중앙 정렬 */
+    margin-top: 10px; /* 상단 여백 추가 */
+}
+
+/* 기사 이미지 스타일 */
+.board-image {
+    max-width: 100%; /* 이미지 너비를 컨테이너에 맞춤 */
+    max-height: 500px; /* 이미지 최대 높이 제한 */
+    height: auto; /* 이미지 높이를 원래 비율에 맞춤 */
+    object-fit: contain; /* 이미지 비율을 유지하며 전체 내용이 보이도록 함 */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin-top: 20px; /* 이미지 상단 여백 추가 */
+}
+
+.back-button {
+    padding: 10px 20px;
+    background-color: #A8A8F7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.back-button:hover {
+    background-color: #D1C2E9;
+}
+/* 댓글 섹션 스타일 */
+.comments-section {
+    max-width: 700px;
+    margin: 40px auto; /* 섹션을 중앙에 배치 */
+    padding: 20px;
+    background-color: #f9f9f9; /* 배경색 */
+    border: 1px solid #ddd; /* 테두리 */
+    border-radius: 10px; /* 둥근 모서리 */
+}
+.comment {
+    border-bottom: 1px solid #ddd; /* 댓글 하단 테두리 */
+    padding: 10px;
+}
+
+.comment-timestamp {
+    display: block; /* 타임스탬프를 블록 요소로 만들어 줄 바꿈이 일어나게 함 */
+    color: #777;
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+.comments-section form {
+    margin-bottom: 20px; /* 폼과 댓글 리스트 사이의 여백 */
+}
+
+.comments-section form textarea {
+    margin-bottom: 10px; /* 텍스트 영역과 버튼 사이의 여백 */
+}
+
+.comments-section h3 {
+    margin-bottom: 10px;
+}
+
+#comment-form {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+#comment-text {
+    padding: 10px;
+    margin-bottom: 10px;
+    height: 100px; /* 댓글 입력란의 높이 */
+    border: 1px solid #ccc;
+    border-radius: 5px; /* 둥근 모서리 */
+    resize: vertical; /* 세로로 크기 조정 가능 */
+}
+
+.submit-comment {
+    padding: 10px 20px;
+    background-color: #5cb85c; /* 배경색 */
+    color: white; /* 텍스트 색상 */
+    border: none;
+    border-radius: 5px; /* 둥근 모서리 */
+    cursor: pointer;
+}
+
+.submit-comment:hover {
+    background-color: #4cae4c; /* 호버 상태 배경색 */
+}
+
+#comments-container {
+    margin-top: 20px;
+}
