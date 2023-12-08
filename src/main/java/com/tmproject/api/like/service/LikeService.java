@@ -1,5 +1,7 @@
 package com.tmproject.api.like.service;
 
+import com.tmproject.Common.exception.CustomException;
+import com.tmproject.Common.exception.ErrorCode;
 import com.tmproject.api.board.entity.Board;
 import com.tmproject.api.board.repository.BoardRepository;
 import com.tmproject.api.comment.entity.Comment;
@@ -24,8 +26,12 @@ public class LikeService {
     @Transactional
     public void saveBoardLike(Long boardId, Member member) {
         Board board = boardRepository.findById(boardId).orElseThrow();
-        Like likeBoard = Like.likeBoard(member, board);
 
+        if (likeRepository.findByMemberAndBoard(member, board).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATED_LIKE_EXCEPTION);
+        }
+
+        Like likeBoard = Like.likeBoard(member, board);
         likeRepository.save(likeBoard);
     }
 
@@ -35,7 +41,7 @@ public class LikeService {
         Optional<Like> likeBoard = likeRepository.findByMemberAndBoard(member, board);
 
         if (likeBoard.isEmpty()) {
-            throw new RuntimeException();
+            throw new CustomException(ErrorCode.NOT_FOUND_LIKE_EXCEPTION);
         }
 
         likeRepository.deleteById(likeBoard.get().getLikeId());
@@ -44,9 +50,13 @@ public class LikeService {
     @Transactional
     public void saveCommentLike(Long boardId, Member member) {
         Comment comment = commentRepository.findById(boardId).orElseThrow();
-        Like likeBoard = Like.likeComment(member, comment);
 
-        likeRepository.save(likeBoard);
+        if (likeRepository.findByMemberAndComment(member, comment).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATED_LIKE_EXCEPTION);
+        }
+
+        Like LikeComment = Like.likeComment(member, comment);
+        likeRepository.save(LikeComment);
     }
 
     @Transactional
@@ -55,11 +65,16 @@ public class LikeService {
         Optional<Like> likeComment = likeRepository.findByMemberAndComment(member, comment);
 
         if (likeComment.isEmpty()) {
-            throw new RuntimeException();
+            throw new CustomException(ErrorCode.NOT_FOUND_LIKE_EXCEPTION);
         }
 
         likeRepository.deleteById(likeComment.get().getLikeId());
     }
+
+//    @Transactional
+//    public int getBoardLikeCount(Member member, Long boardId) {
+//        Optional<Like> likeBoards = likeRepository.findAllByMember()
+//    }
 
 
 

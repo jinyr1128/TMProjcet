@@ -66,6 +66,16 @@
             return;
         }
 
+        let url = "/api/board/";
+        let params = boardId;
+
+        $.ajax({
+            type:"GET"
+            , url:"/api/member/boards"
+            , data: {
+
+            }
+        })
         // API 호출을 통해 게시물 데이터를 불러오는 코드를 예정
         // 예: fetch('/api/board/' + boardId)...
     }

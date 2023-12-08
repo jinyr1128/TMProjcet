@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -62,5 +63,15 @@ public class likeController {
         return ResponseEntity.ok("댓글 좋아요 취소 성공");
     }
 
+//    @GetMapping("/member/boards/{boardId}/like-count")
+//    public ApiResponseDto<?> getBoardLikeCount(
+//        @AuthenticationPrincipal MemberDetailsImpl memberDetails,
+//        @PathVariable Long boardId
+//    ) {
+//        Member member = memberDetails.getMember();
+//        int likeCount = likeService.getBoardLikeCount(member, boardId);
+//        return new ApiResponseDto<>("게시글 좋아요 수 호출 성공", 200, likeCount);
+//
+//    }
 
 }
