@@ -1,0 +1,187 @@
+/* 헤더 스타일 */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ccc;
+}
+/* 헤더 내 그룹핑된 로고와 제목 */
+.header-group {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    margin-right: 10px; /* 로고와 제목 사이의 간격 조정 */
+}
+
+.logo-image {
+    max-width: 80px;
+    height: auto;
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0; /* 마진 제거 */
+}
+
+/* 네비게이션 바 (중앙 정렬) */
+.header-center {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+}
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+nav ul li {
+    margin: 0 20px;
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+}
+/* 네비게이션 스타일 */
+nav {
+    flex-grow: 2; /* 네비게이션 메뉴가 중앙에 위치하도록 */
+}
+
+/* 로그인 버튼 스타일 */
+.login-id-btn {
+    padding: 10px 20px;
+    background-color: #A8A8F7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.login-id-btn:hover {
+    background-color: #D1C2E9;
+}
+.admin-btn {
+    padding: 10px 20px;
+    background-color: #A8A8F7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.admin-btn:hover {
+    background-color: #D1C2E9;
+}
+/* 전체 페이지 중앙 정렬을 위한 메인 컨테이너 스타일 */
+/* 프로필 수정 컨테이너 스타일 */
+.profile-edit-container {
+    display: flex;
+    flex-direction: row; /* 가로 방향으로 요소를 배열 */
+    align-items: center; /* 요소들을 세로 방향으로 가운데 정렬 */
+    justify-content: center; /* 요소들을 가로 방향으로 가운데 정렬 */
+    margin: 50px auto; /* 위아래 마진을 주어 중앙에 배치 */
+    padding: 20px; /* 내부 여백 */
+    background-color: #fff; /* 배경색 */
+    border-radius: 10px; /* 테두리 둥글게 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    max-width: 700px; /* 컨테이너 최대 너비 */
+}
+
+/* 프로필 이미지 및 업로드 버튼 스타일 */
+.profile-image {
+    position: relative;
+    margin-right: 30px; /* 오른쪽 여백 */
+}
+/* 프로필 이미지 스타일 */
+.profile-image img {
+    width: 150px; /* 이미지 크기 */
+    height: 150px; /* 이미지 크기 */
+    border-radius: 50%; /* 원형으로 만들기 */
+    object-fit: cover; /* 이미지 비율 유지하면서 요소에 맞춤 */
+    margin-bottom: 20px; /* 하단 여백 */
+    position: relative;
+}
+
+/* 프로필 정보 스타일 */
+.profile-info {
+    text-align: center; /* 텍스트 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+
+}
+
+/* 프로필 수정 필드 스타일 */
+.profile-edit-fields {
+    width: 100%; /* 가로 전체 사용 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 입력 필드 스타일 */
+/* 수정 필드 및 버튼 스타일 */
+.profile-edit-fields input,
+.profile-edit-fields textarea {
+    width: calc(100% - 40px); /* 부모 컨테이너에서 양쪽 패딩 공간을 뺀 너비 */
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 저장하기 버튼 스타일 */
+.save-changes-button {
+    padding: 10px 20px;
+    background-color: #A8A8F7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-changes-button:hover {
+    background-color: #D1C2E9;
+}
+.image-edit-button {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #A8A8F7;
+    color: white;
+    cursor: pointer;
+}
+.image-edit-button:hover {
+    background-color: #D1C2E9;
+}
+.profile-info h2 {
+    font-size: 28px; /* 큰 제목 크기 */
+    margin-bottom: 10px; /* 제목과 설명 사이의 여백 */
+}
+.profile-info p {
+    font-size: 16px; /* 본문 텍스트 크기 */
+}
+.profile-edit-fields .save-changes-button {
+    width: 100%; /* 부모 컨테이너 너비에 맞춤 */
+    padding: 10px;
+    margin-top: 10px;
+}
+.info-edit-button {
+    padding: 10px 20px;
+    background-color: #A8A8F7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.info-edit-button:hover {
+    background-color: #D1C2E9;
+}
