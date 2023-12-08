@@ -69,6 +69,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/member/naver/callback").permitAll()
                         .requestMatchers("/api/member/google/callback").permitAll()*/
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                        // 임시 테스트를 위해
         );
 
         http.formLogin((formLogin) ->
