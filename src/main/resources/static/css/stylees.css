@@ -63,19 +63,28 @@ nav {
 }
 
 /* 로그인 버튼 스타일 */
-.login-button {
+.login-id-btn {
     padding: 10px 20px;
-    background-color: darkgray;
-    color: black;
+    background-color: #A8A8F7;
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
-
-.login-button:hover {
-    background-color: lightgray;
+.login-id-btn:hover {
+    background-color: #D1C2E9;
 }
-
+.admin-btn {
+    padding: 10px 20px;
+    background-color: #A8A8F7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.admin-btn:hover {
+    background-color: #D1C2E9;
+}
 
 /* 메인 콘텐츠 스타일 */
 main {
