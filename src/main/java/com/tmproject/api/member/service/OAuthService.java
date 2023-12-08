@@ -309,6 +309,7 @@ public class OAuthService {
                 }
             }
 
+
             // db에 같은 이름 멤버 존재하든 말든 이동
             // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
             String kakaoEmail = kakaoMemberInfo.getEmail();
