@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>오늘 뭐먹지?</title>
+  <link rel="stylesheet" href="../static/css/create.css">
+</head>
+<body>
+<header>
+  <div class="header-group">
+    <div class="logo">
+      <img src="../static/images/logo1.jpeg" alt="Logo" class="logo-image"/>
+    </div>
+    <h1>당신의 메뉴</h1>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="../templates/index.html">홈</a></li>
+      <li><a href="../templates/create.html">작성하기</a></li>
+      <li><a href="#">내 프로필</a></li>
+      <li><a href="#">라이브러리</a></li>
+    </ul>
+  </nav>
+  <div class="login-button-container">
+    <span id="username" style="display: none;"></span> <!-- 사용자 이름 표시 -->
+    <button id="login-id-btn" onclick="location.href='../templates/oauthLogin.html'">로그인하기</button>
+    <button id="admin-btn" onclick="location.href='/api/user/admin'">관리자페이지</button>
+  </div>
+</header>
+<main>
+  <!-- 이미지 업로드 박스 -->
+  <div class="upload-box">
+    <label for="image-upload">이미지 업로드:</label>
+    <input type="file" id="image-upload" name="image-upload" accept="image/*" style="display:none;" onchange="previewImage(event);">
+    <div class="image-preview" onclick="document.getElementById('image-upload').click();">
+      <p>이미지를 여기에 드래그하거나 클릭하여 업로드하세요.</p>
+      <!-- 미리보기가 표시될 이미지 태그 -->
+      <img id="image-preview" src="" alt="Image preview" style="display:none; max-width:100%; height:auto;">
+    </div>
+  </div>
+
+  <!-- 제목 박스 -->
+  <div class="title-box">
+    <label for="title">제목:</label>
+    <input type="text" id="title" name="title">
+  </div>
+
+  <!-- 내용 박스 -->
+  <div class="content-box">
+    <label for="content">내용:</label>
+    <textarea id="content" name="content"></textarea>
+  </div>
+
+  <!-- 버튼 -->
+  <div class="button-group">
+    <button type="button" class="save-button">임시저장</button>
+    <button type="submit" class="submit-button">작성하기</button>
+  </div>
+</main>
+<script>
+  function previewImage(event) {
+    // 파일이 선택되었는지 확인
+    var files = event.target.files;
+    if (files && files[0]) {
+      var reader = new FileReader();
+      // 파일을 읽어 버퍼에 저장
+      reader.onload = function(e) {
+        // 읽기 동작이 성공적으로 완료되면 이미지의 src 속성을 변경
+        document.getElementById('image-preview').src = e.target.result;
+        // 이미지를 표시
+        document.getElementById('image-preview').style.display = 'block';
+      };
+      // 파일 읽기 시작
+      reader.readAsDataURL(files[0]);
+    }
+  }
+</script>
+</body>
+</html>
