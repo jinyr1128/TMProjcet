@@ -15,29 +15,40 @@
   </div>
   <nav>
     <ul>
-      <li><a href="#">홈</a></li>
-      <li><a href="#">작성하기</a></li>
-      <li><a href="#">내 프로필</a></li>
-      <li><a href="#">라이브러리</a></li>
+      <li><a href="../templates/index.html">홈</a></li>
+      <li><a href="../templates/create.html">작성하기</a></li>
+      <li><a href="../templates/profile.html">내 프로필</a></li>
+        <li><a href="../templates/mypage.html">라이브러리</a></li>
     </ul>
   </nav>
-  <div class="login-button-container">
-
-      <div class="login-button-container">
-          <span id="username" style="display: none;"></span> <!-- 사용자 이름 표시 -->
-          <button id="login-id-btn" onclick="location.href='../templates/oauthLogin.html'">로그인하기</button>
-          <button id="admin-btn" onclick="location.href='/api/user/admin'">관리자페이지</button>
-      </div>
+    <div class="login-button-container">
+        <span id="username" style="display: none;"></span> <!-- 사용자 이름 표시 -->
+        <img src="../static/images/profile-image.png" alt="Profile" class="profile-image" onclick="location.href='../templates/profile.html'" />
+        <button id="admin-btn" class = "admin-btn" onclick="location.href='/api/user/admin'">관리자페이지</button>
+    </div>
 </header>
 <main>
-  <article>
-   <img src="../static/images/IMG_3258.jpeg" alt="일단 예제 이미지"/>
-    <h2>맛있었었었지</h2>
-    <p>2020년 12월 15일</p>
-    <img src="../static/images/IMG_3258.jpeg" alt="일단 예제 이미지"/>
-    <h2>맛있었었었지</h2>
-    <p>2020년 12월 15일</p>
-  </article>
+    <article>
+        <h3>쩝쩝박사</h3>
+        <!-- 이미지를 클릭하면 Board.html로 이동하도록 <a> 태그 추가 -->
+        <a href="Board.html?boardId=1">
+            <img src="../static/images/IMG_3258.jpeg" alt="수플레오믈렛 리조또"/>
+        </a>
+        <h2>수플레오믈렛 리조또</h2>
+        <p>2023년 12월 1일</p>
+    </article>
+    <article>
+    <h3>태국맛집러</h3>
+    <img src="../static/images/IMG_4761.JPG" alt="일단 예제 이미지"/>
+    <h2>아디락 피자 베이컨</h2>
+    <p>2023년 12월 3일</p>
+    </article>
+    <article>
+        <h3>쩝쩝박사</h3>
+        <img src="../static/images/IMG_6944.JPG" alt="일단 예제 이미지"/>
+        <h2>들기름 막국수</h2>
+        <p>2023년 12월 6일</p>
+    </article>
 </main>
 <script>
     // 게시물 목록을 로드하는 함수
@@ -49,19 +60,25 @@
                 const container = document.getElementById('board-container');
                 boards.forEach(board => {
                     const article = document.createElement('article');
-                    article.innerHTML = `
-                    <img src="${board.imageUrl}" alt="${board.title}">
+                    const image = document.createElement('img');
+                    image.src = board.imageUrl;
+                    image.alt = board.title;
+                    // 이미지 클릭 이벤트 리스너 추가
+                    image.addEventListener('click', () => openBoardDetails(board.id));
+                    article.appendChild(image);
+                    article.innerHTML += `
                     <h2>${board.title}</h2>
                     <p>${board.createdAt}</p>
                 `;
-                    // 게시물 클릭 이벤트 리스너 추가
-                    article.addEventListener('click', () => openBoardDetails(board.id));
                     container.appendChild(article);
                 });
             })
             .catch(error => console.error('Error:', error));
     }
-
+    // 이미지 클릭 시 Board.html로 이동하는 함수
+    function openBoardDetails(boardId) {
+        window.location.href = `Board.html?boardId=${boardId}`;
+    }
     // 게시물 상세 페이지로 이동하는 함수
     function openBoardDetails(boardId) {
         window.location.href = `/board-details.html?boardId=${boardId}`;

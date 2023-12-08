@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>오늘 뭐먹지?</title>
+    <link rel="stylesheet" href="../static/css/profile.css">
+</head>
+<body>
+<header>
+    <div class="header-group">
+        <div class="logo">
+            <img src="../static/images/logo1.jpeg" alt="Logo" class="logo-image"/>
+        </div>
+        <h1>당신의 메뉴</h1>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="../templates/index.html">홈</a></li>
+            <li><a href="../templates/create.html">작성하기</a></li>
+            <li><a href="../templates/profile.html">내 프로필</a></li>
+            <li><a href="#">라이브러리</a></li>
+        </ul>
+    </nav>
+    <div class="login-button-container">
+        <span id="username" style="display: none;"></span> <!-- 사용자 이름 표시 -->
+        <img src="../static/images/profile-image.png" alt="Profile" class="main-image" onclick="location.href='../templates/profile.html'" />
+        <button id="admin-btn" class = "admin-btn" onclick="location.href='/api/user/admin'">관리자페이지</button>
+    </div>
+</header>
+<div class="profile-edit-container">
+    <div class="profile-image">
+        <img src="../static/images/profile-image.png" alt="Profile Image" class="profile-image"/>
+        <button class="image-edit-button" onclick="document.getElementById('image-upload').click();">이미지 업로드</button>
+        <input type="file" id="image-upload" name="image-upload" accept="image/*" style="display:none;" onchange="previewProfileImage(event);">
+    </div>
+    <div class="profile-info">
+        <h2>쩝쩝박사</h2>
+        <p>도데체 뭘 먹어야지만 잘 먹었다고 소문이 날까???</p>
+        <button class="info-edit-button" onclick="toggleEditFields();">수정</button>
+    </div>
+    <div class="profile-edit-fields" style="display:none;">
+        <textarea id="bio" name="bio" placeholder="자기소개"></textarea>
+        <input type="password" id="password" name="password" placeholder="비밀번호 확인">
+        <button class="save-changes-button">저장하기</button>
+    </div>
+</div>
+
+
+<script>
+    function previewProfileImage(event) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            var output = document.querySelector('.profile-image img');
+            output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function toggleEditFields() {
+        var editFields = document.querySelector('.profile-edit-fields');
+        if (editFields.style.display === "none") {
+            editFields.style.display = "block";
+        } else {
+            editFields.style.display = "none";
+        }
+    }
+</script>
+</body>
+</html>

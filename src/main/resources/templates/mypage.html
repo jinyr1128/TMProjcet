@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>오늘 뭐먹지?</title>
+  <link rel="stylesheet" href="../static/css/mypage.css">
+</head>
+<body>
+<header>
+  <div class="header-group">
+    <div class="logo">
+      <img src="../static/images/logo1.jpeg" alt="Logo" class="logo-image"/>
+    </div>
+    <h1>당신의 메뉴</h1>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="../templates/index.html">홈</a></li>
+      <li><a href="../templates/create.html">작성하기</a></li>
+      <li><a href="../templates/profile.html">내 프로필</a></li>
+      <li><a href="#">라이브러리</a></li>
+    </ul>
+  </nav>
+  <div class="login-button-container">
+    <span id="username" style="display: none;"></span> <!-- 사용자 이름 표시 -->
+    <!-- 로그인 버튼 대신 프로필 이미지 추가 -->
+    <img src="../static/images/profile-image.png" alt="Profile" class="profile-image" onclick="location.href='../templates/profile.html'" />
+    <button id="admin-btn" class = "admin-btn" onclick="location.href='/api/user/admin'">관리자페이지</button>
+  </div>
+</header>
+<main>
+  <article>
+    <h3>쩝쩝박사</h3>
+    <!-- 이미지를 클릭하면 Board.html로 이동하도록 <a> 태그 추가 -->
+    <a href="Board.html?boardId=1">
+      <img src="../static/images/IMG_3258.jpeg" alt="수플레오믈렛 리조또"/>
+    </a>
+    <h2>수플레오믈렛 리조또</h2>
+    <p>2023년 12월 1일</p>
+  </article>
+  <article>
+    <h3>쩝쩝박사</h3>
+    <img src="../static/images/IMG_6944.JPG" alt="일단 예제 이미지"/>
+    <h2>들기름 막국수</h2>
+    <p>2020년 12월 6일</p>
+  </article>
+</main>
+<script>
+  // 게시물 목록을 로드하는 함수
+  // 게시물을 로드하고 각 게시물에 클릭 이벤트 리스너를 추가
+  function loadBoards() {
+    fetch('/api/member/boards')
+            .then(response => response.json())
+            .then(boards => {
+              const container = document.getElementById('board-container');
+              boards.forEach(board => {
+                const article = document.createElement('article');
+                article.innerHTML = `
+                    <img src="${board.imageUrl}" alt="${board.title}">
+                    <h2>${board.title}</h2>
+                    <p>${board.createdAt}</p>
+                `;
+                // 게시물 클릭 이벤트 리스너 추가
+                article.addEventListener('click', () => openBoardDetails(board.id));
+                container.appendChild(article);
+              });
+            })
+            .catch(error => console.error('Error:', error));
+  }
+
+  // 이미지 클릭 시 Board.html로 이동하는 함수
+  function openBoardDetails(boardId) {
+    window.location.href = `Board.html?boardId=${boardId}`;
+  }
+  // 게시물 상세 페이지로 이동하는 함수
+  function openBoardDetails(boardId) {
+    window.location.href = `/board-details.html?boardId=${boardId}`;
+  }
+  function checkLoginStatus() {
+    fetch('/api/user/status') // 로그인 상태 확인 API
+            .then(response => response.json())
+            .then(user => {
+              if (user && user.username) {
+                // 로그인 상태일 때
+                document.getElementById('login-id-btn').style.display = 'none'; // 로그인 버튼 숨기기
+                document.getElementById('username').textContent = user.username; // 사용자 이름 표시
+                document.getElementById('username').style.display = 'block';
+              } else {
+                // 비로그인 상태일 때
+                document.getElementById('login-id-btn').style.display = 'block';
+                document.getElementById('username').style.display = 'none';
+              }
+            })
+            .catch(error => console.error('Error:', error));
+  }
+
+  // 페이지 로드 시 게시물 로드 함수 호출
+  window.onload = loadBoards;
+</script>
+</body>
+</html>
