@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@Slf4j
+@Slf4j(topic = "OAuth Controller")
 @RestController
 @RequestMapping("/api/member")
 public class OAuthController {

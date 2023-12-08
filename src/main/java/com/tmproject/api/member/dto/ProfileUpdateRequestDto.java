@@ -1,9 +1,11 @@
 package com.tmproject.api.member.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class ProfileUpdateRequestDto {
 
     @NotBlank

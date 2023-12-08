@@ -29,7 +29,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-@Slf4j
+@Slf4j(topic = "OAuth Login")
 @Service
 public class OAuthService {
 

@@ -18,7 +18,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
+@Slf4j(topic = "Member Controller")
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
