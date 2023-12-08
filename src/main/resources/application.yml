@@ -15,6 +15,10 @@ spring:
   h2:
     console:
       enabled: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2MB
 
 jwt:
   secret_key: ${jwt.secret_key}
@@ -27,15 +31,15 @@ file:
   path: ./upload/
 
 kakao:
-  client_id : 8bbcb11360f192ffb599e80a0fc3489a
-  redirect_uri : http://localhost:8080/api/member/kakao/callback
+  client_id : ${kakao.client_id}
+  redirect_uri : ${kakao.redirect_uri}
 
 naver:
-  client_id : 3jo14itcz2ELeaKj8BPQ
-  client_secret : DUp0cF33Dw
-  redirect_uri : http://localhost:8080/api/member/naver/callback
+  client_id : ${naver.client_id}
+  client_secret : ${naver.client_secret}
+  redirect_uri : ${naver.redirect_uri}
 
 google :
-  client_id : 807257127729-2eg30f8m4cq2ngtm1d6q4o2o68p5q8bm.apps.googleusercontent.com
-  client_secret : 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
-  redirect_uri : http://localhost:8080/api/member/google/callback
+  client_id : ${google.client_id}
+  client_secret : ${google.client_secret}
+  redirect_uri : ${google.redirect_uri}

@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-@Slf4j
+@Slf4j(topic = "Member Service")
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -92,11 +92,10 @@ public class MemberService {
         Member memberEntity = memberRepository.findById(memberId).orElseThrow(
                 ()-> new IllegalArgumentException("해당 id는 존재하지 않습니다.")
         );
-        if(!memberDetails.getUsername().equals(requestDto.getUsername())){
+        log.info("requestDto.getUsername() : "+requestDto.getUsername());
+        log.info("memberDetails.getUsername() : "+memberDetails.getMember().getUsername());
+        if(!memberDetails.getMember().getUsername().equals(requestDto.getUsername())){
             return new ApiResponseDto<>("유저 네임은 변경할 수 없습니다.", 400, null);
-        }
-        if (memberRepository.existsByUsernameAndIdNot(requestDto.getUsername(), memberId)) {
-            return new ApiResponseDto<>("이미 사용 중인 유저 네임입니다.", 400, null);
         }
 
         if (memberDetails.getMember().getId() != memberId) {
@@ -119,7 +118,7 @@ public class MemberService {
         }
         // 이메일 중복 검증 확인 amdin email과 member email 검증
 
-        if (!isPasswordAllowed(requestDto.getPassword())) {
+        if (!isPasswordAllowed()) {
             return new ApiResponseDto<>("해당 비밀번호는 최근 3번 안에 사용한 비밀번호이기에 사용할 수 없습니다.", 400, null);
         }
         // 새 비밀번호가 마지막 세 개의 비밀번호 중 하나와 일치하는지 확인
@@ -135,7 +134,7 @@ public class MemberService {
         return new ApiResponseDto<>("유저 프로필 수정 성공",200,null);
     }
 
-    private boolean isPasswordAllowed(String newPassword) {
+    private boolean isPasswordAllowed() {
         if (passwordHistory.size() >= 3) {
             // passwordHistory가 3개 이상인 경우
             String firstElement = passwordHistory.pop();
@@ -162,9 +161,25 @@ public class MemberService {
             return new ApiResponseDto<>("해당 사용자는 권한이 없습니다.", 403, null);
         }
 
+        String originalFilename = imageFile.getOriginalFilename();
+        log.info("originalFilename : "+originalFilename);
+
+        StringTokenizer st = new StringTokenizer(originalFilename, ".");
+        log.info("filename : "+st.nextToken());
+
+        String fileExtension = st.nextToken();
+        log.info("fileExtension : "+fileExtension);
+
+        // 허용되는 이미지 확장자 목록 (예: jpg, jpeg, png 등)
+        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png");
+
+        if (!allowedExtensions.contains(fileExtension.toLowerCase())) {
+            return new ApiResponseDto<>("지원하지 않는 이미지 확장자입니다.", 400, null);
+        }
+
         UUID uuid = UUID.randomUUID();
         // image파일 이름의 중복을 방지하기 위해 uuid사용
-        String uuidImage = uuid+"_"+imageFile.getOriginalFilename();
+        String uuidImage = uuid+"_"+originalFilename;
 
         log.info("uuidImage : "+uuidImage);
         // db에서 저장되는 uuid형식
@@ -198,10 +213,15 @@ public class MemberService {
         Member member = memberRepository.findById(memberId).orElseThrow(
                 ()-> new IllegalArgumentException("해당하는 Member Id는 존재하지 않습니다.")
         );
-        ProfileResponseDto profileResponseDto = new ProfileResponseDto(member.getUsername(), member.getIntroduction());
+        ProfileResponseDto profileResponseDto = ProfileResponseDto
+                .builder()
+                .username(member.getUsername())
+                .introduction(member.getIntroduction())
+                .profileImageUrl(member.getProfileImageUrl())
+                .build();
+
         log.info("profileResponseDto.getUsername() : "+profileResponseDto.getUsername());
         log.info("profileResponseDto.getIntroduction() : "+profileResponseDto.getIntroduction());
-        // 관리자의 정보는 못보게 해야하나?
         return new ApiResponseDto<>("해당 유저 정보 조회 성공",200, profileResponseDto);
     }
 }
