@@ -1,37 +1,107 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>오늘 뭐먹지?</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/board.css">
 </head>
 <body>
-<div class="p-5 mb-5 text-center</> bg-light">
-    <h1 class="mb-3">Today Menu</h1>
-    <h4 class="mb-3">오늘은 뭐먹을까요?</h4>
-</div>
-
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-lg-8">
-            <article>
-                <input type="hidden" id="article-id" th:value="${board.id}">
-                <header class="mb-4">
-                    <h1 class="fw-bolder mb-1" th:text="${board.title}"></h1>
-                    <div class="text-muted fst-italic mb-2" th:text="|Posted on ${#temporals.format(board.createdAt, 'yyyy-MM-dd HH:mm')} By ${article.author}|"></div>
-                </header>
-                <section class="mb-5">
-                    <p class="fs-5 mb-4" th:text="${board.content}"></p>
-                </section>
-                <button type="button" id="modify-btn"
-                        th:onclick="|location.href='@{/new-article?id={boardId}(boardId=${board.id})}'|"
-                        class="btn btn-primary btn-sm">수정</button>
-                <button type="button" id="delete-btn"
-                        class="btn btn-secondary btn-sm">삭제</button>
-            </article>
+<header>
+    <div class="header-group">
+        <div class="logo">
+            <img src="../static/images/logo1.jpeg" alt="Logo" class="logo-image"/>
+        </div>
+        <h1>당신의 메뉴</h1>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="../templates/index.html">홈</a></li>
+            <li><a href="../templates/create.html">작성하기</a></li>
+            <li><a href="../templates/profile.html">내 프로필</a></li>
+            <li><a href="../templates/mypage.html">라이브러리</a></li>
+        </ul>
+    </nav>
+    <div class="login-button-container">
+        <span id="username" style="display: none;"></span> <!-- 사용자 이름 표시 -->
+        <img src="../static/images/profile-image.png" alt="Profile" class="profile-image" onclick="location.href='../templates/profile.html'" />
+        <button id="admin-btn" class = "admin-btn" onclick="location.href='/api/user/admin'">관리자페이지</button>
+    </div>
+</header>
+<main>
+    <div class="board-container">
+        <h2 class="board-title">수플레오믈렛 리조또</h2>
+        <img class="board-image" src="../static/images/IMG_3258.jpeg" alt="게시물 이미지">
+        <div class="board-content">
+            <p>고에몬 강남점의 수플레오믈렛 새우 크림 리조또</p>
+            <p class="board-date">게시일: 2023년 12월 1일</p>
+        </div>
+        <button class="back-button" onclick="location.href='../templates/index.html'">뒤로 가기</button>
+    </div>
+    <!-- 댓글 섹션 -->
+    <div class="comments-section">
+        <h3>댓글</h3>
+        <form id="comment-form">
+            <textarea id="comment-text" placeholder="댓글을 작성해주세요..." required></textarea>
+            <button type="submit" class="submit-comment">댓글 작성</button>
+        </form>
+        <div id="comments-container">
+            <!-- 여기에 JavaScript를 통해 댓글을 동적으로 추가 -->
         </div>
     </div>
-</div>
+</main>
 
-<script src="/js/board.js"></script>
+<script>
+    // URL에서 boardId 추출하기
+    function getBoardIdFromURL() {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        return urlParams.get('boardId');
+    }
+
+    // 게시물 로드 함수
+    function loadBoardDetails() {
+        const boardId = getBoardIdFromURL();
+        if (!boardId) {
+            console.error('게시물 ID가 없습니다.');
+            return;
+        }
+
+        // API 호출을 통해 게시물 데이터를 불러오는 코드를 예정
+        // 예: fetch('/api/board/' + boardId)...
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        var commentForm = document.getElementById('comment-form');
+        var commentsContainer = document.getElementById('comments-container');
+
+        commentForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // 폼의 기본 제출 동작을 방지
+            var commentText = document.getElementById('comment-text').value.trim();
+
+            if (commentText) {
+                // 현재 날짜와 시간을 가져옴
+                var currentDate = new Date();
+                var timestamp = currentDate.toLocaleString('ko-KR');
+
+                // 댓글과 시간을 담은 요소를 생성
+                var commentDiv = document.createElement('div');
+                commentDiv.classList.add('comment');
+                commentDiv.innerHTML = `
+                <p>${commentText}</p>
+                <span class="comment-timestamp">${timestamp}</span>
+            `;
+
+                // 댓글을 comments-container의 맨 위에 추가
+                commentsContainer.prepend(commentDiv);
+
+                // 댓글 입력란을 비움
+                document.getElementById('comment-text').value = '';
+            }
+        });
+    });
+
+    // 페이지 로드 시 게시물 세부 정보 로드
+    window.onload = loadBoardDetails;
+</script>
+
 </body>
+</html>
