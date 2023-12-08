@@ -284,9 +284,7 @@ public class OAuthService {
         // db에 해당 멤버의 이름이 중복되는 멤버가 있을 경우
         if(kakaoMember != null) {
             Member sameKakaoIdMember = memberRepository.findByKakaoId(kakaoMemberInfo.getId()).orElse(null);
-            if() {
 
-            }
         }
 
         return null;
@@ -327,9 +325,10 @@ public class OAuthService {
                 kakaoMember = new Member(kakaoMemberInfo.getNickname(), encodedPassword, email, MemberRoleEnum.USER, kakaoId);
             }
 
-            memberRepository.save(kakaoMember);*/
-        }
-        return kakaoMember;
+            memberRepository.save(kakaoMember);
+
+            return kakaoMember;
+        }*/
     }
 
     private NaverMemberInfoDto getNaverMemberInfo(String accessToken) throws JsonProcessingException {
