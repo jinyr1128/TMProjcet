@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>오늘 뭐먹지?</title>
-  <link rel="stylesheet" href="../static/css/stylees.css">
+    <meta charset="UTF-8">
+    <title>오늘 뭐먹지?</title>
+    <link rel="stylesheet" href="../static/css/stylees.css">
 </head>
 <body>
 <header>
-  <div class="header-group">
-    <div class="logo">
-      <img src="../static/images/logo1.jpeg" alt="Logo" class="logo-image"/>
+    <div class="header-group">
+        <div class="logo">
+            <img src="../static/images/logo1.jpeg" alt="Logo" class="logo-image"/>
+        </div>
+        <h1>당신의 메뉴</h1>
     </div>
-    <h1>당신의 메뉴</h1>
-  </div>
-  <nav>
-    <ul>
-      <li><a href="../templates/index.html">홈</a></li>
-      <li><a href="../templates/create.html">작성하기</a></li>
-      <li><a href="../templates/profile.html">내 프로필</a></li>
-        <li><a href="../templates/mypage.html">라이브러리</a></li>
-    </ul>
-  </nav>
+    <nav>
+        <ul>
+            <li><a href="../templates/index.html">홈</a></li>
+            <li><a href="../templates/create.html">작성하기</a></li>
+            <li><a href="../templates/profile.html">내 프로필</a></li>
+            <li><a href="../templates/mypage.html">라이브러리</a></li>
+        </ul>
+    </nav>
     <div class="login-button-container">
         <span id="username" style="display: none;"></span> <!-- 사용자 이름 표시 -->
-        <img src="../static/images/profile-image.png" alt="Profile" class="profile-image" onclick="location.href='../templates/profile.html'" />
+        <button id="login-id-btn" class ="login-id-btn" onclick="location.href='../templates/oauthLogin.html'">로그인하기</button>
         <button id="admin-btn" class = "admin-btn" onclick="location.href='/api/user/admin'">관리자페이지</button>
     </div>
 </header>
@@ -38,10 +38,10 @@
         <p>2023년 12월 1일</p>
     </article>
     <article>
-    <h3>태국맛집러</h3>
-    <img src="../static/images/IMG_4761.JPG" alt="일단 예제 이미지"/>
-    <h2>아디락 피자 베이컨</h2>
-    <p>2023년 12월 3일</p>
+        <h3>태국맛집러</h3>
+        <img src="../static/images/IMG_4761.JPG" alt="일단 예제 이미지"/>
+        <h2>아디락 피자 베이컨</h2>
+        <p>2023년 12월 3일</p>
     </article>
     <article>
         <h3>쩝쩝박사</h3>
