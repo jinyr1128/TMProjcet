@@ -26,7 +26,7 @@ public class OAuthController {
     @GetMapping("/kakao/callback")
     public ResponseEntity<ApiResponseDto<?>> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         logCode(code, null);
-        ApiResponseDto apiResponseDto = oauthService.oauthLogin(code, null, OauthEnum.KAKAO.getAuthority());
+        ApiResponseDto<?> apiResponseDto = oauthService.oauthLogin(code, null, OauthEnum.KAKAO.getAuthority());
         String token = apiResponseDto.getData().toString();
         makeCookie(token, response);
         return new ResponseEntity<>(new ApiResponseDto<>("카카오 로그인 성공", 200, null), HttpStatus.valueOf(apiResponseDto.getStatusCode()));
@@ -35,7 +35,7 @@ public class OAuthController {
     @GetMapping("/naver/callback")
     public ResponseEntity<ApiResponseDto<?>> naverLogin(@RequestParam String code, @RequestParam String state, HttpServletResponse response) throws JsonProcessingException{
         logCode(code, null);
-        ApiResponseDto apiResponseDto = oauthService.oauthLogin(code, state, OauthEnum.NAVER.getAuthority());
+        ApiResponseDto<?> apiResponseDto = oauthService.oauthLogin(code, state, OauthEnum.NAVER.getAuthority());
         String token = apiResponseDto.getData().toString();
         makeCookie(token, response);
         return new ResponseEntity<>(new ApiResponseDto<>("네이버 로그인 성공", 200, null), HttpStatus.valueOf(apiResponseDto.getStatusCode()));
@@ -44,7 +44,7 @@ public class OAuthController {
     @GetMapping("/google/callback")
     public ResponseEntity<ApiResponseDto<?>> googleLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException{
         logCode(code, null);
-        ApiResponseDto apiResponseDto = oauthService.oauthLogin(code, null, OauthEnum.GOOGLE.getAuthority());
+        ApiResponseDto<?> apiResponseDto = oauthService.oauthLogin(code, null, OauthEnum.GOOGLE.getAuthority());
         String token = apiResponseDto.getData().toString();
         makeCookie(token, response);
         return new ResponseEntity<>(new ApiResponseDto<>("구글 로그인 성공", 200, null), HttpStatus.valueOf(apiResponseDto.getStatusCode()));

@@ -69,15 +69,21 @@ public class OAuthService {
                 String accessKakaoToken = getToken(code, null, oauthType);
                 log.info("인가 코드로 액세스 토큰 요청 : "+accessKakaoToken);
 
-                KakaoMemberInfoDto kakaoMemberInfo = getKakaoUserInfo(accessKakaoToken);
+                KakaoMemberInfoDto kakaoMemberInfo = getKakaoMemberInfo(accessKakaoToken);
                 log.info("토큰으로 카카오 API 호출 : 액세스 토큰으로 카카오 사용자 정보 가져오기 : "+kakaoMemberInfo.getNickname());
 
-                Member kakaoUser = registerKakaoMemberIfNeeded(kakaoMemberInfo);
-                log.info("필요시에 회원가입 : "+kakaoUser.getKakaoId());
-                log.info("kakaoUser.getKakaoId() : "+kakaoUser.getKakaoId());
-                log.info("kakaoUser.getKakaoUsername() : "+kakaoUser.getUsername());
+                Member kakaoMember = registerKakaoMemberIfNeeded(kakaoMemberInfo);
+                log.info("필요시에 회원가입 : "+kakaoMember.getKakaoId());
+                log.info("kakaoMember.getKakaoId() : "+kakaoMember.getKakaoId());
+                log.info("kakaoMember.getKakaoUsername() : "+kakaoMember.getUsername());
 
-                String createKakaoToken =  jwtUtil.createToken(kakaoUser.getUsername(), kakaoUser.getRole());
+                // 여기서 멤버가 만들어지지 않으면?
+                // 유저 네임으로 할지, id로 할지
+                if(kakaoMember.getId() == null){
+                    return new ApiResponseDto<>("kakao oauth 회원 가입 실패", 400, null);
+                }
+
+                String createKakaoToken =  jwtUtil.createToken(kakaoMember.getUsername(), kakaoMember.getRole());
                 log.info("JWT 토큰 반환 : "+createKakaoToken);
                 return new ApiResponseDto<>("Kakao oauth 로그인 성공",200, createKakaoToken);
             case "NAVER" :
@@ -87,12 +93,16 @@ public class OAuthService {
                 NaverMemberInfoDto naverMemberInfo = getNaverMemberInfo(accessNaverToken);
                 log.info("토큰으로 네이버 API 호출 : 액세스 토큰으로 네이버 사용자 정보 가져오기 : " + naverMemberInfo.getNickname());
 
-                Member naverUser = registerNaverUserIfNeeded(naverMemberInfo);
-                log.info("필요시에 회원가입 : " + naverUser.getNaverId());
-                log.info("naverUser.getNaverId() : " + naverUser.getNaverId());
-                log.info("naverUser.getNaverUsername() : " + naverUser.getUsername());
+                Member naverMember = registerNaverUserIfNeeded(naverMemberInfo);
+                log.info("필요시에 회원가입 : " + naverMember.getNaverId());
+                log.info("naverMember.getNaverId() : " + naverMember.getNaverId());
+                log.info("naverMember.getNaverUsername() : " + naverMember.getUsername());
 
-                String createNaverToken = jwtUtil.createToken(naverUser.getUsername(), naverUser.getRole());
+                if(naverMember.getId() == null){
+                    return new ApiResponseDto<>("naver oauth 회원 가입 실패", 400, null);
+                }
+
+                String createNaverToken = jwtUtil.createToken(naverMember.getUsername(), naverMember.getRole());
                 log.info("JWT 토큰 반환 : " + createNaverToken);
 
                 return new ApiResponseDto<>("Naver oauth 로그인 성공",200, createNaverToken);
@@ -105,8 +115,12 @@ public class OAuthService {
 
                 Member googleMember = registerGoogleMemberIfNeeded(googleUserInfo);
                 log.info("필요시에 회원가입 : " + googleMember.getGoogleId());
-                log.info("googleMember.getNaverId() : " + googleMember.getGoogleId());
-                log.info("googleMember.getNaverUsername() : " + googleMember.getUsername());
+                log.info("googleMember.getGoogleId() : " + googleMember.getGoogleId());
+                log.info("googleMember.getGoogleUsername() : " + googleMember.getUsername());
+
+                if(googleMember.getId() == null){
+                    return new ApiResponseDto<>("Google oauth 회원 가입 실패", 400, null);
+                }
 
                 String createGoggleToken = jwtUtil.createToken(googleMember.getUsername(), googleMember.getRole());
                 log.info("JWT 토큰 반환 : " + createGoggleToken);
@@ -228,7 +242,7 @@ public class OAuthService {
     }
 
     // 카카오 로직
-    private KakaoMemberInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+    private KakaoMemberInfoDto getKakaoMemberInfo(String accessToken) throws JsonProcessingException {
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kapi.kakao.com")
@@ -265,29 +279,59 @@ public class OAuthService {
     }
 
     private Member registerKakaoMemberIfNeeded(KakaoMemberInfoDto kakaoMemberInfo) {
-        // DB 에 중복된 Kakao Id 가 있는지 확인
-        Long kakaoId = kakaoMemberInfo.getId();
-        Member kakaoUser = memberRepository.findByKakaoId(kakaoId).orElse(null);
+        // db에 해당 멤버의 이름이 중복되는 멤버가 존재하는지 확인
+        Member kakaoMember = memberRepository.findByUsername(kakaoMemberInfo.getNickname()).orElse(null);
+        // db에 해당 멤버의 이름이 중복되는 멤버가 있을 경우
+        if(kakaoMember != null) {
+            Member sameKakaoIdMember = memberRepository.findByKakaoId(kakaoMemberInfo.getId()).orElse(null);
 
-        if (kakaoUser == null) {
+        }
+
+        return null;
+        // DB 에 중복된 Kakao Id 가 있는지 확인
+        /*Long kakaoId = kakaoMemberInfo.getId();
+        Member kakaoMember = memberRepository.findByKakaoId(kakaoId).orElse(null);
+
+        // kakaoId 중복 확인
+        if (kakaoMember == null) {
+            // 카카오 사용자 username과 동일한 username 가진 회원이 있는지 확인
+            String kakaoUsername = kakaoMemberInfo.getNickname();
+            // db에 같은 이름 멤버 있는지 확인
+            Member sameUsernameMember = memberRepository.findByUsername(kakaoUsername).orElse(null);
+
+            // db에 같은 이름 멤버 존재
+            if(sameUsernameMember != null) {
+                if(sameUsernameMember.getKakaoId() == null){
+                    kakaoMember = sameUsernameMember;
+                    kakaoMember = kakaoMember.kakaoIdUpdate(kakaoId);
+                }else{
+                    return null;
+                }
+            }
+
+
+
+
+            // db에 같은 이름 멤버 존재하든 말든 이동
             // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
             String kakaoEmail = kakaoMemberInfo.getEmail();
-            Member sameEmailUser = memberRepository.findByEmail(kakaoEmail).orElse(null);
-            if (sameEmailUser != null) {
-                kakaoUser = sameEmailUser;
-
-                kakaoUser = kakaoUser.kakaoIdUpdate(kakaoId);
+            Member sameEmailMember = memberRepository.findByEmail(kakaoEmail).orElse(null);
+            if (sameEmailMember != null) {
+                // 중복되는 emailMember 존재
+                kakaoMember = sameEmailMember;
+                kakaoMember = kakaoMember.kakaoIdUpdate(kakaoId);
             } else {
                 String password = UUID.randomUUID().toString();
                 String encodedPassword = passwordEncoder.encode(password);
                 String email = kakaoMemberInfo.getEmail();
 
-                kakaoUser = new Member(kakaoMemberInfo.getNickname(), encodedPassword, email, MemberRoleEnum.USER, kakaoId);
+                kakaoMember = new Member(kakaoMemberInfo.getNickname(), encodedPassword, email, MemberRoleEnum.USER, kakaoId);
             }
 
-            memberRepository.save(kakaoUser);
-        }
-        return kakaoUser;
+            memberRepository.save(kakaoMember);
+
+            return kakaoMember;
+        }*/
     }
 
     private NaverMemberInfoDto getNaverMemberInfo(String accessToken) throws JsonProcessingException {
@@ -408,4 +452,5 @@ public class OAuthService {
         }
         return googleMember;
     }
+
 }
