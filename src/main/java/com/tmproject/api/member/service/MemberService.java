@@ -42,7 +42,7 @@ public class MemberService {
 
     private static Stack<String> passwordHistory = new Stack<>();
 
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, Stack<String> passwordHistory){
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
     }
