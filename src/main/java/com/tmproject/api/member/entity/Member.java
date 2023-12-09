@@ -1,6 +1,5 @@
 package com.tmproject.api.member.entity;
 
-import com.tmproject.api.member.dto.ProfileResponseDto;
 import com.tmproject.api.member.dto.ProfileUpdateRequestDto;
 import com.tmproject.global.common.Timestamped;
 import jakarta.persistence.*;
@@ -10,9 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -100,13 +96,10 @@ public class Member extends Timestamped {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public Member kakaoIdUpdate(Long kakaoId) {
+    public Member OauthIdUpdate(Long kakaoId, String naverId, String googleId){
         this.kakaoId = kakaoId;
-        return this;
-    }
-
-    public Member naverIdUpdate(String naverId) {
         this.naverId = naverId;
+        this.googleId = googleId;
         return this;
     }
 }

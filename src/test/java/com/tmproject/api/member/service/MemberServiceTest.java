@@ -112,7 +112,6 @@ public class MemberServiceTest {
     @DisplayName("[MemberService] updateMember() success")
     void updateMemberSuccess() {
         // given
-
         long memberId = 1L;
 
         ProfileUpdateRequestDto requestDto = ProfileUpdateRequestDto
@@ -275,13 +274,6 @@ public class MemberServiceTest {
                 .username("test2")
                 .password("password")
                 .passwordConfirm("password")
-                .email("test1@naver.com")
-                .build();
-
-        Member member1 = Member.builder()
-                .id(memberId)
-                .username("test1")
-                .password("password")
                 .email("test1@naver.com")
                 .build();
 

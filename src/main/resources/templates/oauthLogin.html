@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>로그인 페이지</title>
@@ -21,18 +21,18 @@
                 <p class="text-white-50 mt-2 mb-5">서비스 사용을 위해 로그인을 해주세요!</p>
 
                 <div class="mb-2">
-                    <a onclick="location.href='https://accounts.google.com/o/oauth2/v2/auth?client_id=807257127729-2eg30f8m4cq2ngtm1d6q4o2o68p5q8bm.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/member/google/callback&response_type=code&scope=https://www.googleapis.com/auth/userinfo.email'">
-                        <img src="/images/google.png">
+                    <a href="https://accounts.google.com/o/oauth2/auth?client_id=807257127729-2eg30f8m4cq2ngtm1d6q4o2o68p5q8bm.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/member/google/callback&response_type=code&scope=https://www.googleapis.com/auth/userinfo.profile">
+                        <img src="/images/google.png" th:src="@{/images/google.png}"/>
                     </a>
                 </div>
                 <div class="mb-2">
-                    <a onclick="location.href='https://nid.naver.com/oauth2.0/authorize?client_id=3jo14itcz2ELeaKj8BPQ&response_type=code&redirect_uri=http://localhost:8080/api/member/naver/callback&state'">
-                        <img src="/images/naver.png"/>
+                    <a th:href="@{https://nid.naver.com/oauth2.0/authorize(client_id='3jo14itcz2ELeaKj8BPQ',redirect_uri='http://localhost:8080/api/member/naver/callback',response_type='code')}">
+                        <img src="/images/naver.png" th:src="@{/images/naver.png}"/>
                     </a>
                 </div>
                 <div class="mb-2">
-                    <a onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=8bbcb11360f192ffb599e80a0fc3489a&redirect_uri=http://localhost:8080/api/member/kakao/callback&response_type=code'">
-                        <img src="/images/kakao.png"/>
+                    <a th:href="@{https://kauth.kakao.com/oauth/authorize(client_id='8bbcb11360f192ffb599e80a0fc3489a',redirect_uri='http://localhost:8080/api/member/kakao/callback',response_type='code')}">
+                        <img src="/images/kakao.png" th:src="@{/images/kakao.png}"/>
                     </a>
                 </div>
             </div>

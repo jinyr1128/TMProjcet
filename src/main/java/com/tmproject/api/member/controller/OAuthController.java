@@ -29,7 +29,7 @@ public class OAuthController {
         ApiResponseDto<?> apiResponseDto = oauthService.oauthLogin(code, null, OauthEnum.KAKAO.getAuthority());
         String token = apiResponseDto.getData().toString();
         makeCookie(token, response);
-        return new ResponseEntity<>(new ApiResponseDto<>("카카오 로그인 성공", 200, null), HttpStatus.valueOf(apiResponseDto.getStatusCode()));
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
     }
 
     @GetMapping("/naver/callback")
@@ -38,7 +38,7 @@ public class OAuthController {
         ApiResponseDto<?> apiResponseDto = oauthService.oauthLogin(code, state, OauthEnum.NAVER.getAuthority());
         String token = apiResponseDto.getData().toString();
         makeCookie(token, response);
-        return new ResponseEntity<>(new ApiResponseDto<>("네이버 로그인 성공", 200, null), HttpStatus.valueOf(apiResponseDto.getStatusCode()));
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
     }
 
     @GetMapping("/google/callback")
@@ -47,11 +47,11 @@ public class OAuthController {
         ApiResponseDto<?> apiResponseDto = oauthService.oauthLogin(code, null, OauthEnum.GOOGLE.getAuthority());
         String token = apiResponseDto.getData().toString();
         makeCookie(token, response);
-        return new ResponseEntity<>(new ApiResponseDto<>("구글 로그인 성공", 200, null), HttpStatus.valueOf(apiResponseDto.getStatusCode()));
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
     }
 
     private void logCode(String code, String state){
-        log.info("code : "+code);
+        log.info("OAuth Authorization code : "+code);
         log.info("state : "+state);
     }
 
@@ -61,4 +61,11 @@ public class OAuthController {
         cookie.setPath("/");
         response.addCookie(cookie);
     }
+    // authorization code -> jwt token으로
+    // 네이버 인가 코드를 header로 받아볼 수 있게 만들어볼래?~ 라네요?
+    // 이거 컨트롤러...로? 만들라는데,, 어떻게 하는지 몰라요
+
+    // 1. oauthService db unqiue key 중복 해결하기
+    // 2. custom jwt Token rendering
+
 }
