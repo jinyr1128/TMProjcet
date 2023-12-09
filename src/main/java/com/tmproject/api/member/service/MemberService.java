@@ -153,8 +153,10 @@ public class MemberService {
                 // 한개 이상 매칭되는게 존재
                 int matchPassword = 0;
                 for(int i = 0; i<passwordHistory.size(); i++){
-                    int pp = passwordHistory.search(requestPassword);       // 0 or 1
-                    matchPassword++;
+                    int match = passwordHistory.search(requestPassword);       // 0 or 1
+                    if(match == 1){
+                        matchPassword++;
+                    }
                 }
                 if(matchPassword <= 3){
                     return true;
