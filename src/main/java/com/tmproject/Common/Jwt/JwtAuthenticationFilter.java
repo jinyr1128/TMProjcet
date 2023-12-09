@@ -27,6 +27,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         log.info("attemptAuthentication()");
+        log.info("request : "+request);
         try {
             LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
 
@@ -52,7 +53,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String token = jwtUtil.createToken(username, role);
         log.info(token);
         // 토큰 요청할 때 잘못 보내는거 같음,
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, token);
+        // response.setHeader(); 없을 때 넣어주는데, 중복된 토큰이 있으면 업데이트 해준다.
     }
 
     @Override

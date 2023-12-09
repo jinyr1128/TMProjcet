@@ -73,19 +73,21 @@ public class OAuthService {
                 log.info("토큰으로 카카오 API 호출 : 액세스 토큰으로 카카오 사용자 정보 가져오기 : "+kakaoMemberInfo.getNickname());
 
                 Member kakaoMember = registerKakaoMemberIfNeeded(kakaoMemberInfo);
-                log.info("필요시에 회원가입 : "+kakaoMember.getKakaoId());
-                log.info("kakaoMember.getKakaoId() : "+kakaoMember.getKakaoId());
-                log.info("kakaoMember.getKakaoUsername() : "+kakaoMember.getUsername());
-
+                //kakaoMember.
                 // 여기서 멤버가 만들어지지 않으면?
                 // 유저 네임으로 할지, id로 할지
                 if(kakaoMember.getId() == null){
                     return new ApiResponseDto<>("kakao oauth 회원 가입 실패", 400, null);
                 }
+                log.info("필요시에 회원가입 : "+kakaoMember.getKakaoId());
+                log.info("kakaoMember.getKakaoId() : "+kakaoMember.getKakaoId());
+                log.info("kakaoMember.getKakaoUsername() : "+kakaoMember.getUsername());
 
                 String createKakaoToken =  jwtUtil.createToken(kakaoMember.getUsername(), kakaoMember.getRole());
                 log.info("JWT 토큰 반환 : "+createKakaoToken);
                 return new ApiResponseDto<>("Kakao oauth 로그인 성공",200, createKakaoToken);
+                // 토큰 가지고 kakao api info정보 얻기 -> accessToken으로
+                // kakao
             case "NAVER" :
                 String accessNaverToken = getToken(code, state, oauthType);
                 log.info("인가 코드로 액세스 토큰 요청 : " + accessNaverToken);
@@ -279,59 +281,86 @@ public class OAuthService {
     }
 
     private Member registerKakaoMemberIfNeeded(KakaoMemberInfoDto kakaoMemberInfo) {
-        // db에 해당 멤버의 이름이 중복되는 멤버가 존재하는지 확인
-        Member kakaoMember = memberRepository.findByUsername(kakaoMemberInfo.getNickname()).orElse(null);
-        // db에 해당 멤버의 이름이 중복되는 멤버가 있을 경우
-        if(kakaoMember != null) {
-            Member sameKakaoIdMember = memberRepository.findByKakaoId(kakaoMemberInfo.getId()).orElse(null);
+        // KakaoMemberInfoDto -> id, nickname, email
+        // 해당 카카오 아이디 확인하기
+        // 검증해야하는 email, username, id를 전부다
+        log.info("registerKakaoMemberIfNeeded() 검증 시작");
+        Long kakaoId = kakaoMemberInfo.getId();
 
-        }
+        log.info("kakaoMemberInfo.getId() : "+kakaoMemberInfo.getId());
+        log.info("kakaoMemberInfo.getEmail() : "+kakaoMemberInfo.getEmail());
+        log.info("kakaoMemberInfo.getNickname() : "+kakaoMemberInfo.getNickname());
 
-        return null;
-        // DB 에 중복된 Kakao Id 가 있는지 확인
-        /*Long kakaoId = kakaoMemberInfo.getId();
-        Member kakaoMember = memberRepository.findByKakaoId(kakaoId).orElse(null);
+        Member duplicateMember = memberRepository
+                .findByKakaoIdOrEmailOrUsername(
+                        kakaoMemberInfo.getId(),
+                        kakaoMemberInfo.getEmail(),
+                        kakaoMemberInfo.getNickname()
+                ).orElse(null);
 
-        // kakaoId 중복 확인
-        if (kakaoMember == null) {
-            // 카카오 사용자 username과 동일한 username 가진 회원이 있는지 확인
-            String kakaoUsername = kakaoMemberInfo.getNickname();
-            // db에 같은 이름 멤버 있는지 확인
-            Member sameUsernameMember = memberRepository.findByUsername(kakaoUsername).orElse(null);
+        if(duplicateMember == null){
+            log.info("중복되는 kakaoId, username, email없을때 새로운 계정 회원 가입");
+            String uuid = UUID.randomUUID().toString();
+            Member member = Member.builder()
+                    .username(kakaoMemberInfo.getNickname())
+                    .password(uuid)
+                    .email(kakaoMemberInfo.getEmail())
+                    .role(MemberRoleEnum.USER)
+                    .kakaoId(kakaoMemberInfo.getId())
+                    .build();
 
-            // db에 같은 이름 멤버 존재
-            if(sameUsernameMember != null) {
-                if(sameUsernameMember.getKakaoId() == null){
-                    kakaoMember = sameUsernameMember;
-                    kakaoMember = kakaoMember.kakaoIdUpdate(kakaoId);
-                }else{
-                    return null;
+            memberRepository.save(member);
+            return member;
+        }else{
+            log.info("username, email, kakaoId 셋 중 하나 이상이 중복될 때");
+            log.info("kakaoMemberInfo.getId() : "+duplicateMember.getId());
+            log.info("kakaoMemberInfo.getEmail() : "+duplicateMember.getEmail());
+            log.info("kakaoMemberInfo.getNickname() : "+duplicateMember.getUsername());
+
+            Member kakaoIdMember = memberRepository.findByKakaoId(kakaoMemberInfo.getId()).orElse(null);
+
+            // kakaoId를 가진 멤버가 없으면
+            if(kakaoIdMember == null){
+                log.info("kakaoId가 가진 멤버가 아닌 username, email 둘 중 하나가 중복될 때");
+                log.info("구글 아이디, 네이버 아이디 탐색하기");
+                String naverId = duplicateMember.getNaverId();
+                String googleId = duplicateMember.getGoogleId();
+
+                if (naverId != null) {
+                    if (googleId != null) {
+                        // 둘다 가지는 멤버
+                        log.info("naverId와 googleId를 둘 다 가지는 멤버");
+                        log.info("kakaoId : "+duplicateMember.getKakaoId());
+                        log.info("naverId : "+naverId);
+                        log.info("googleId : "+googleId);
+                        duplicateMember.OauthIdUpdate(kakaoId, naverId, googleId);
+                    } else {
+                        // naverId만 가지는 멤버
+                        log.info("naverId만 가지는 멤버");
+                        log.info("kakaoId : "+duplicateMember.getKakaoId());
+                        log.info("naverId : "+naverId);
+                        duplicateMember.OauthIdUpdate(kakaoId, naverId, null);
+                        log.info("kakaoId : "+duplicateMember.getKakaoId());
+                    }
+                } else {
+                    // naverId를 가지지 않는 멤버
+                    if (googleId == null) {
+                        log.info("둘 다 가지지 않는 멤버");
+                        duplicateMember.OauthIdUpdate(kakaoId, null, null);
+                    } else {
+                        log.info("googleId만 가지는 멤버");
+                        log.info("kakaoId : "+duplicateMember.getKakaoId());
+                        log.info("googleId : "+googleId);
+                        duplicateMember.OauthIdUpdate(kakaoId, null, googleId);
+                    }
                 }
+                showDuplicateMemberInfo(duplicateMember);
+                memberRepository.save(duplicateMember);
+                return duplicateMember;
             }
-
-
-
-
-            // db에 같은 이름 멤버 존재하든 말든 이동
-            // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인
-            String kakaoEmail = kakaoMemberInfo.getEmail();
-            Member sameEmailMember = memberRepository.findByEmail(kakaoEmail).orElse(null);
-            if (sameEmailMember != null) {
-                // 중복되는 emailMember 존재
-                kakaoMember = sameEmailMember;
-                kakaoMember = kakaoMember.kakaoIdUpdate(kakaoId);
-            } else {
-                String password = UUID.randomUUID().toString();
-                String encodedPassword = passwordEncoder.encode(password);
-                String email = kakaoMemberInfo.getEmail();
-
-                kakaoMember = new Member(kakaoMemberInfo.getNickname(), encodedPassword, email, MemberRoleEnum.USER, kakaoId);
-            }
-
-            memberRepository.save(kakaoMember);
-
-            return kakaoMember;
-        }*/
+            log.info("kakaoId 중복은 회원가입 실패");
+            return null;
+        }
     }
 
     private NaverMemberInfoDto getNaverMemberInfo(String accessToken) throws JsonProcessingException {
@@ -371,35 +400,96 @@ public class OAuthService {
     }
 
     private Member registerNaverUserIfNeeded(NaverMemberInfoDto naverMemberInfo) {
+        // 검증해야하는 email, username, id를 전부다
+        log.info("registerNaverMemberIfNeeded() 검증 시작");
         String naverId = naverMemberInfo.getId();
-        Member naverUser = memberRepository.findByNaverId(naverId).orElse(null);
 
-        if (naverUser == null) {
-            String naverEmail = naverMemberInfo.getEmail();
-            Member sameEmailUser = memberRepository.findByEmail(naverEmail).orElse(null);
-            if (sameEmailUser != null) {
-                naverUser = sameEmailUser;
-                naverUser = naverUser.naverIdUpdate(naverId);
-            } else {
-                String password = UUID.randomUUID().toString();
-                String encodedPassword = passwordEncoder.encode(password);
-                String email = naverMemberInfo.getEmail();
+        log.info("NaverMemberInfo.getId() : "+naverMemberInfo.getId());
+        log.info("NaverMemberInfo.getEmail() : "+naverMemberInfo.getEmail());
+        log.info("NaverMemberInfo.getNickname() : "+naverMemberInfo.getNickname());
 
-                naverUser = new Member(naverMemberInfo.getNickname(), encodedPassword, email, MemberRoleEnum.USER, naverId);
+        Member duplicateMember = memberRepository
+                .findByNaverIdOrEmailOrUsername(
+                        naverMemberInfo.getId(),
+                        naverMemberInfo.getEmail(),
+                        naverMemberInfo.getNickname()
+                ).orElse(null);
+
+        if(duplicateMember == null){
+            log.info("중복되는 naverId, username, email없을때 새로운 계정 회원 가입");
+            String uuid = UUID.randomUUID().toString();
+            Member member = Member.builder()
+                    .username(naverMemberInfo.getNickname())
+                    .password(uuid)
+                    .email(naverMemberInfo.getEmail())
+                    .role(MemberRoleEnum.USER)
+                    .naverId(naverMemberInfo.getId())
+                    .build();
+
+            memberRepository.save(member);
+            return member;
+        }else{
+            log.info("username, email, naverId 셋 중 하나 이상이 중복될 때");
+            log.info("naverMemberInfo.getId() : "+duplicateMember.getId());
+            log.info("naverMemberInfo.getEmail() : "+duplicateMember.getEmail());
+            log.info("naverMemberInfo.getNickname() : "+duplicateMember.getUsername());
+
+            Member naverIdMember = memberRepository.findByNaverId(naverMemberInfo.getId()).orElse(null);
+
+            // kakaoId를 가진 멤버가 없으면
+            if(naverIdMember == null){
+                log.info("kakaoId가 가진 멤버가 아닌 username, email 둘 중 하나가 중복될 때");
+                log.info("구글 아이디, 네이버 아이디 탐색하기");
+                Long kakaoId = duplicateMember.getKakaoId();
+                String googleId = duplicateMember.getGoogleId();
+
+                if (kakaoId != null) {
+                    // kakaoId가 존재하는 멤버
+                    if (googleId != null) {
+                        // 둘다 가지는 멤버
+                        log.info("kakaoId와 googleId를 둘 다 가지는 멤버");
+                        log.info("kakaoId : "+kakaoId);
+                        log.info("naverId : "+duplicateMember.getNaverId());
+                        log.info("googleId : "+googleId);
+                        duplicateMember.OauthIdUpdate(kakaoId, naverId, googleId);
+                    } else {
+                        // kakaoId만 가지는 멤버
+                        log.info("kakaoId만 가지는 멤버");
+                        log.info("kakaoId : "+kakaoId);
+                        log.info("naverId : "+duplicateMember.getNaverId());
+                        duplicateMember.OauthIdUpdate(kakaoId, naverId, null);
+                        log.info("naverId : "+duplicateMember.getNaverId());
+                    }
+                } else {
+                    // kakaoId를 가지지 않는 멤버
+                    if (googleId == null) {
+                        log.info("둘 다 가지지 않는 멤버");
+                        duplicateMember.OauthIdUpdate(null, naverId, null);
+                    } else {
+                        log.info("googleId만 가지는 멤버");
+                        log.info("naverId : "+duplicateMember.getKakaoId());
+                        log.info("googleId : "+googleId);
+                        duplicateMember.OauthIdUpdate(null, naverId, googleId);
+                    }
+                }
+                showDuplicateMemberInfo(duplicateMember);
+                memberRepository.save(duplicateMember);
+                return duplicateMember;
             }
-
-            memberRepository.save(naverUser);
+            log.info("naverId 중복은 회원가입 실패");
+            return null;
         }
-        return naverUser;
     }
 
     private GoogleMemberInfoDto getGoogleMemberInfo(String accessToken) throws JsonProcessingException {
         log.info("getGoogleMemberInfo() start! ");
         URI uri = UriComponentsBuilder
-                .fromUriString("https://www.googleapis.com/oauth2/v3/tokeninfo")
+                // https:/www.googlepis.com/tokeninfo
+                .fromUriString("https://www.googleapis.com/oauth2/v3/userinfo")
                 .queryParam("access_token", accessToken).encode()
                 .build()
                 .toUri();
+                // "Either access_token, id_token, or token_handle required"
 
         log.info("uri : "+uri.toString());
 
@@ -417,17 +507,41 @@ public class OAuthService {
         );
 
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+        log.info("jsonNode.toString() : "+jsonNode.toPrettyString());
+
         log.info("jsonNode.get(id) : "+jsonNode.get("sub"));
-        log.info("jsonNode.get(email) : "+jsonNode.get("email"));
-        log.info("jsonNode.get(exp) : "+jsonNode.get("exp"));
+        log.info("jsonNode.get(name) : "+jsonNode.get("name"));
+        log.info("jsonNode.get(given_name) : "+jsonNode.get("given_name"));
+        log.info("jsonNode.get(family_name) : "+jsonNode.get("family_name"));
         // 이메일은 존재하네?
         String id = jsonNode.get("sub").asText();
         // sub : 요청을 수행하는 주 구성원을 나타내는 ID입니다.
+        String username = jsonNode.get("name").asText();
+
+        URI uri2 = UriComponentsBuilder
+                // https:/www.googlepis.com/tokeninfo
+                .fromUriString("https://www.googleapis.com/oauth2/v3/tokeninfo")
+                .queryParam("access_token", accessToken).encode()
+                .build()
+                .toUri();
+        // "Either access_token, id_token, or token_handle required"
+
+        log.info("uri2 : "+uri2.toString());
+
+        HttpHeaders headers2 = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        RequestEntity<MultiValueMap<String, String>> requestEntity2 = RequestEntity
+                .post(uri)
+                .headers(headers)
+                .body(new LinkedMultiValueMap<>());
+
+        ResponseEntity<String> response2 = restTemplate.exchange(
+                requestEntity,
+                String.class
+        );
+
         String email = jsonNode.get("email").asText();
-        String[] parts = email.split("@");
-        // @를 기준으로 문자열 분할, @ 앞의 부분 추출
-        String username = parts[0];
-        log.info("Username: " + username);
 
         GoogleMemberInfoDto googleUserInfo = GoogleMemberInfoDto.builder()
                 .id(id)
@@ -436,21 +550,94 @@ public class OAuthService {
         return googleUserInfo;
     }
 
-    private Member registerGoogleMemberIfNeeded(GoogleMemberInfoDto googleMemberInfoDto) {
-        String googleMemberUsername = googleMemberInfoDto.getUsername();
-        String googleMemberEmail = googleMemberInfoDto.getEmail();
-        String googleMemberId = googleMemberInfoDto.getId();
-        Member googleMember = memberRepository.findByGoogleId(googleMemberId).orElse(null);
+    private Member registerGoogleMemberIfNeeded(GoogleMemberInfoDto googleMemberInfo) {
+        // 검증해야하는 email, username, id를 전부다
+        log.info("registerNaverMemberIfNeeded() 검증 시작");
+        String googleId = googleMemberInfo.getId();
 
-        if (googleMember == null) {
-            String password = UUID.randomUUID().toString();
-            String encodedPassword = passwordEncoder.encode(password);
+        log.info("googleMemberInfo.getId() : "+googleMemberInfo.getId());
+        log.info("googleMemberInfo.getEmail() : "+googleMemberInfo.getEmail());
+        log.info("googleMemberInfo.getNickname() : "+googleMemberInfo.getUsername());
 
-            googleMember = new Member(googleMemberUsername, encodedPassword, googleMemberEmail, MemberRoleEnum.USER, googleMemberId, null);
+        Member duplicateMember = memberRepository
+                .findByGoogleIdOrEmailOrUsername(
+                        googleMemberInfo.getId(),
+                        googleMemberInfo.getEmail(),
+                        googleMemberInfo.getUsername()
+                ).orElse(null);
 
-            memberRepository.save(googleMember);
+        if(duplicateMember == null){
+            log.info("중복되는 naverId, username, email없을때 새로운 계정 회원 가입");
+            String uuid = UUID.randomUUID().toString();
+            Member member = Member.builder()
+                    .username(googleMemberInfo.getUsername())
+                    .password(uuid)
+                    .email(googleMemberInfo.getEmail())
+                    .role(MemberRoleEnum.USER)
+                    .googleId(googleMemberInfo.getId())
+                    .build();
+
+            memberRepository.save(member);
+            return member;
+        }else{
+            log.info("username, email, naverId 셋 중 하나 이상이 중복될 때");
+            log.info("googleMemberInfo.getId() : "+duplicateMember.getId());
+            log.info("googleMemberInfo.getEmail() : "+duplicateMember.getEmail());
+            log.info("googleMemberInfo.getNickname() : "+duplicateMember.getUsername());
+
+            Member googleIdMember = memberRepository.findByGoogleId(googleMemberInfo.getId()).orElse(null);
+
+            // kakaoId를 가진 멤버가 없으면
+            if(googleIdMember == null){
+                log.info("kakaoId가 가진 멤버가 아닌 username, email 둘 중 하나가 중복될 때");
+                log.info("구글 아이디, 네이버 아이디 탐색하기");
+                Long kakaoId = duplicateMember.getKakaoId();
+                String naverId = duplicateMember.getNaverId();
+
+                if (kakaoId != null) {
+                    // kakaoId가 존재하는 멤버
+                    if (naverId != null) {
+                        // 둘다 가지는 멤버
+                        log.info("kakaoId와 naverId를 둘 다 가지는 멤버");
+                        log.info("kakaoId : "+kakaoId);
+                        log.info("naverId : "+naverId);
+                        log.info("googleId : "+duplicateMember.getGoogleId());
+                        duplicateMember.OauthIdUpdate(kakaoId, naverId, googleId);
+                    } else {
+                        // kakaoId만 가지는 멤버
+                        log.info("kakaoId만 가지는 멤버");
+                        log.info("kakaoId : "+kakaoId);
+                        log.info("googleId : "+duplicateMember.getGoogleId());
+                        duplicateMember.OauthIdUpdate(kakaoId, null, googleId);
+                        log.info("googleId : "+duplicateMember.getGoogleId());
+                    }
+                } else {
+                    // kakaoId를 가지지 않는 멤버
+                    if (naverId == null) {
+                        log.info("둘 다 가지지 않는 멤버");
+                        duplicateMember.OauthIdUpdate(null, null, googleId);
+                    } else {
+                        log.info("naverId만 가지는 멤버");
+                        log.info("naverId : "+naverId);
+                        log.info("googleId : "+duplicateMember.getGoogleId());
+                        duplicateMember.OauthIdUpdate(null, naverId, googleId);
+                    }
+                }
+                showDuplicateMemberInfo(duplicateMember);
+                memberRepository.save(duplicateMember);
+                return duplicateMember;
+            }
+            log.info("googleId 중복은 회원가입 실패");
+            return null;
         }
-        return googleMember;
     }
 
+    private void showDuplicateMemberInfo(Member duplicateMember){
+        log.info("중복 되는 것이 존재 하는 멤버의 회원 가입 최종 정보");
+        log.info("duplicateMember.getUsername() : "+duplicateMember.getUsername());
+        log.info("duplicateMember.getEmail() : "+duplicateMember.getEmail());
+        log.info("duplicateMember.getKakaoId() : "+duplicateMember.getKakaoId());
+        log.info("duplicateMember.getNaverId() : "+duplicateMember.getNaverId());
+        log.info("duplicateMember.getGoogleId() : "+duplicateMember.getGoogleId());
+    }
 }
