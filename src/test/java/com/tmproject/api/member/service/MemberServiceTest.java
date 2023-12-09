@@ -9,6 +9,7 @@ import com.tmproject.api.member.entity.MemberRoleEnum;
 import com.tmproject.api.member.repository.MemberRepository;
 import com.tmproject.global.common.ApiResponseDto;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +43,12 @@ public class MemberServiceTest {
     private MemberService memberService;
 
     private static Stack<String> passwordHistory = new Stack<>();
+
+    @BeforeEach
+    void setup(){
+        passwordHistory.clear();
+    }
+
     @Test
     @DisplayName("[MemberService] signup() success")
     void signupSuccess() {
@@ -105,12 +112,14 @@ public class MemberServiceTest {
     @DisplayName("[MemberService] updateMember() success")
     void updateMemberSuccess() {
         // given
+
         long memberId = 1L;
+
         ProfileUpdateRequestDto requestDto = ProfileUpdateRequestDto
                 .builder()
                 .username("test1")
-                .password("password")
-                .passwordConfirm("password")
+                .password("newPassword")
+                .passwordConfirm("newPassword")
                 .email("test1@naver.com")
                 .build();
 
@@ -118,7 +127,7 @@ public class MemberServiceTest {
                 .builder()
                 .id(memberId)
                 .username("test1")
-                .password("password")
+                .password("password11122")
                 .email("test3@naver.com")
                 .build();
 
@@ -129,7 +138,6 @@ public class MemberServiceTest {
 
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(memberEntity));
         when(memberRepository.existsByEmailAndIdNot(requestDto.getEmail(), memberId)).thenReturn(false);
-        when(passwordEncoder.encode(requestDto.getPassword())).thenReturn("encodedPassword");
 
         // when
         ApiResponseDto<?> response = memberService.updateMember(memberId, requestDto, memberDetails);
@@ -144,6 +152,7 @@ public class MemberServiceTest {
     void updateMemberChangeUsername() {
         // given
         long memberId = 1L;
+
         ProfileUpdateRequestDto requestDto = ProfileUpdateRequestDto
                 .builder()
                 .username("changeUsername")
@@ -164,6 +173,7 @@ public class MemberServiceTest {
                 .member(memberEntity)
                 .build();
         // 해당 사용자는 username = "test" -> "changeUsername"로 변경
+
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(memberEntity));
 
         // when
@@ -304,36 +314,36 @@ public class MemberServiceTest {
     void updateMemberPasswordHistoryRestriction() {
         // given
         long memberId = 2L;
-        ProfileUpdateRequestDto requestDto1 = ProfileUpdateRequestDto
+        ProfileUpdateRequestDto requestDto = ProfileUpdateRequestDto
                 .builder()
                 .username("test1")
-                .password("password")
-                .passwordConfirm("password")
+                .password("password123123")
+                .passwordConfirm("password123123")
                 .email("test1@naver.com")
                 .build();
 
         ProfileUpdateRequestDto requestDto2 = ProfileUpdateRequestDto
                 .builder()
-                .username("test1")
-                .password("password")
-                .passwordConfirm("password")
-                .email("test1@naver.com")
+                .username(requestDto.getUsername())
+                .password(requestDto.getPassword())
+                .passwordConfirm(requestDto.getPassword())
+                .email(requestDto.getEmail())
                 .build();
 
         ProfileUpdateRequestDto requestDto3 = ProfileUpdateRequestDto
                 .builder()
-                .username("test1")
-                .password("password")
-                .passwordConfirm("password")
-                .email("test1@naver.com")
+                .username(requestDto.getUsername())
+                .password(requestDto.getPassword())
+                .passwordConfirm(requestDto.getPassword())
+                .email(requestDto.getEmail())
                 .build();
 
         ProfileUpdateRequestDto requestDto4 = ProfileUpdateRequestDto
                 .builder()
-                .username("test1")
-                .password("password")
-                .passwordConfirm("password")
-                .email("test1@naver.com")
+                .username(requestDto.getUsername())
+                .password(requestDto.getPassword())
+                .passwordConfirm(requestDto.getPassword())
+                .email(requestDto.getEmail())
                 .build();
 
         // 4번 수행해야 stack에 3번 쌓인 것을 통해서 확인 가능
@@ -341,7 +351,7 @@ public class MemberServiceTest {
         Member member = Member.builder()
                 .id(memberId)
                 .username("test1")
-                .password("password")
+                .password("myMemberpass11")
                 .email("test1@naver.com")
                 .build();
 
@@ -353,21 +363,21 @@ public class MemberServiceTest {
         // Stubbing
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
-        passwordHistory.push(requestDto1.getPassword());
+        passwordHistory.push(requestDto.getPassword());
         passwordHistory.push(requestDto2.getPassword());
         passwordHistory.push(requestDto3.getPassword());
         passwordHistory.push(requestDto4.getPassword());
 
         // when
-        ApiResponseDto<?> response1 = memberService.updateMember(memberId, requestDto1, memberDetails);
+        ApiResponseDto<?> response = memberService.updateMember(memberId, requestDto, memberDetails);
         ApiResponseDto<?> response2 = memberService.updateMember(memberId, requestDto2, memberDetails);
         ApiResponseDto<?> response3 = memberService.updateMember(memberId, requestDto3, memberDetails);
         ApiResponseDto<?> response4 = memberService.updateMember(memberId, requestDto4, memberDetails);
         // 똑같은 작업을 4번 실행해야 history에 쌓이면서 에러사항 충족
 
         // then
-        assertEquals("유저 프로필 수정 성공", response1.getMsg());
-        assertEquals(200, response1.getStatusCode());
+        assertEquals("유저 프로필 수정 성공", response.getMsg());
+        assertEquals(200, response.getStatusCode());
         assertEquals("유저 프로필 수정 성공", response2.getMsg());
         assertEquals(200, response2.getStatusCode());
         assertEquals("유저 프로필 수정 성공", response3.getMsg());
