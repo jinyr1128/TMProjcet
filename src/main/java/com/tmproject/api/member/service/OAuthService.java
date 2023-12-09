@@ -518,30 +518,7 @@ public class OAuthService {
         // sub : 요청을 수행하는 주 구성원을 나타내는 ID입니다.
         String username = jsonNode.get("name").asText();
 
-        URI uri2 = UriComponentsBuilder
-                // https:/www.googlepis.com/tokeninfo
-                .fromUriString("https://www.googleapis.com/oauth2/v3/tokeninfo")
-                .queryParam("access_token", accessToken).encode()
-                .build()
-                .toUri();
-        // "Either access_token, id_token, or token_handle required"
-
-        log.info("uri2 : "+uri2.toString());
-
-        HttpHeaders headers2 = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-
-        RequestEntity<MultiValueMap<String, String>> requestEntity2 = RequestEntity
-                .post(uri)
-                .headers(headers)
-                .body(new LinkedMultiValueMap<>());
-
-        ResponseEntity<String> response2 = restTemplate.exchange(
-                requestEntity,
-                String.class
-        );
-
-        String email = jsonNode.get("email").asText();
+        String email = UUID.randomUUID().toString()+"@gmail.com";
 
         GoogleMemberInfoDto googleUserInfo = GoogleMemberInfoDto.builder()
                 .id(id)
