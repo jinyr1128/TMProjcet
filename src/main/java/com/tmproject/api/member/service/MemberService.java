@@ -24,7 +24,6 @@ import java.util.*;
 
 @Slf4j(topic = "Member Service")
 @Service
-@RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -42,6 +41,11 @@ public class MemberService {
     // cloud 시간 남으면 해보자
 
     private static Stack<String> passwordHistory = new Stack<>();
+
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder){
+        this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostConstruct
     public void createAdminAccount(){
@@ -118,7 +122,7 @@ public class MemberService {
         }
         // 이메일 중복 검증 확인 amdin email과 member email 검증
 
-        if (!isPasswordAllowed()) {
+        if (!isPasswordAllowed(requestDto.getPassword())) {
             return new ApiResponseDto<>("해당 비밀번호는 최근 3번 안에 사용한 비밀번호이기에 사용할 수 없습니다.", 400, null);
         }
         // 새 비밀번호가 마지막 세 개의 비밀번호 중 하나와 일치하는지 확인
@@ -134,16 +138,33 @@ public class MemberService {
         return new ApiResponseDto<>("유저 프로필 수정 성공",200,null);
     }
 
-    private boolean isPasswordAllowed() {
+    private boolean isPasswordAllowed(String requestPassword) {
         if (passwordHistory.size() >= 3) {
             // passwordHistory가 3개 이상인 경우
-            String firstElement = passwordHistory.pop();
-            boolean allEqual = passwordHistory.stream().allMatch(element -> element.equals(firstElement));
+            // 모든 passwordHistory에서 firstElement와 match되는지 확인
+            boolean allEqual = passwordHistory.stream().allMatch(element -> element.equals(requestPassword));
+            // 푸시는 해야함
+            passwordHistory.push(requestPassword);
 
-            // passwordHistory를 다시 되돌려놓음
-            passwordHistory.push(firstElement);
-
-            return !allEqual;
+            if(!allEqual){
+                // 단 한개도 매칭되는게 없음
+                return true;
+            }else{
+                // 한개 이상 매칭되는게 존재
+                int matchPassword = 0;
+                for(int i = 0; i<passwordHistory.size(); i++){
+                    int match = passwordHistory.search(requestPassword);       // 0 or 1
+                    if(match == 1){
+                        matchPassword++;
+                    }
+                }
+                if(matchPassword <= 3){
+                    return true;
+                }else{
+                    passwordHistory.pop();
+                    return false;
+                }
+            }
         }
         // passwordHistory가 3개 미만인 경우는 모두 허용
         return true;

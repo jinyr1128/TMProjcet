@@ -63,6 +63,10 @@ public class MemberController {
         ApiResponseDto<ProfileResponseDto> apiResponseDto = memberService.getMemberInfo(memberId, memberDetails);
         return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
     }
-    // 자기 자신의 정보를 확인할 수 있는 메서드
-    // 자기 자신이 아닌 다른 사람도 확인이 가능해야함
+    // authorization code -> jwt token으로
+    // 네이버 인가 코드를 header로 받아볼 수 있게 만들어볼래?~ 라네요?
+    // 이거 컨트롤러...로? 만들라는데,, 어떻게 하는지 몰라요
+
+    // 1. oauthService db unqiue key 중복 해결하기
+    // 2. custom jwt Token rendering
 }
