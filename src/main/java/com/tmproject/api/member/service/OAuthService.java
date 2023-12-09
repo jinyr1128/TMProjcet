@@ -20,6 +20,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -204,6 +205,8 @@ public class OAuthService {
                         String.class
                 );
 
+                log.info("naverResponse : "+naverResponse);
+
                 JsonNode naverJsonNode = new ObjectMapper().readTree(naverResponse.getBody());
                 return naverJsonNode.get("access_token").asText();
 
@@ -237,6 +240,7 @@ public class OAuthService {
                 );
 
                 JsonNode googleJsonNode = new ObjectMapper().readTree(googleResponse.getBody());
+                log.info(googleJsonNode.toPrettyString());
                 return googleJsonNode.get("access_token").asText();
 
             default: return null;
@@ -280,7 +284,8 @@ public class OAuthService {
         return new KakaoMemberInfoDto(id, nickname, email);
     }
 
-    private Member registerKakaoMemberIfNeeded(KakaoMemberInfoDto kakaoMemberInfo) {
+    @Transactional
+    public Member registerKakaoMemberIfNeeded(KakaoMemberInfoDto kakaoMemberInfo) {
         // KakaoMemberInfoDto -> id, nickname, email
         // 해당 카카오 아이디 확인하기
         // 검증해야하는 email, username, id를 전부다
@@ -399,7 +404,8 @@ public class OAuthService {
         return new NaverMemberInfoDto(naverId, naverName, naverEmail);
     }
 
-    private Member registerNaverUserIfNeeded(NaverMemberInfoDto naverMemberInfo) {
+    @Transactional
+    public Member registerNaverUserIfNeeded(NaverMemberInfoDto naverMemberInfo) {
         // 검증해야하는 email, username, id를 전부다
         log.info("registerNaverMemberIfNeeded() 검증 시작");
         String naverId = naverMemberInfo.getId();
@@ -527,7 +533,8 @@ public class OAuthService {
         return googleUserInfo;
     }
 
-    private Member registerGoogleMemberIfNeeded(GoogleMemberInfoDto googleMemberInfo) {
+    @Transactional
+    public Member registerGoogleMemberIfNeeded(GoogleMemberInfoDto googleMemberInfo) {
         // 검증해야하는 email, username, id를 전부다
         log.info("registerNaverMemberIfNeeded() 검증 시작");
         String googleId = googleMemberInfo.getId();
