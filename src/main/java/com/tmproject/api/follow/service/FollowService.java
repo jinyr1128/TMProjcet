@@ -4,7 +4,6 @@ import com.tmproject.api.follow.entity.Follow;
 import com.tmproject.api.follow.repository.FollowRepository;
 import com.tmproject.api.member.entity.Member;
 import com.tmproject.api.member.repository.MemberRepository;
-import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ public class FollowService {
 
     public void followUser(String username, Long followerId) {
         Member member = checkMember(username);
-        Member follower = checkFollwer(followerId);
+        Member follower = checkFollower(followerId);
 
         if (isAlreadyFollow(member, follower)) {
             throw new IllegalArgumentException();
@@ -29,7 +28,7 @@ public class FollowService {
 
     public void unFollowUser(String username, Long followerId) {
         Member user = checkMember(username);
-        Member follower = checkFollwer(followerId);
+        Member follower = checkFollower(followerId);
 
         if (!isAlreadyFollow(user, follower)) {
             throw new IllegalArgumentException();
@@ -47,7 +46,7 @@ public class FollowService {
         return member.get();
     }
 
-    private Member checkFollwer(Long followerId) {
+    private Member checkFollower(Long followerId) {
         Optional<Member> follower = memberRepository.findById(followerId);
         if (follower.isEmpty()) {
             throw new IllegalArgumentException();
