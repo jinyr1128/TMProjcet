@@ -1,6 +1,7 @@
 package com.tmproject.api.member.service;
 
 import com.tmproject.Common.Security.MemberDetailsImpl;
+import com.tmproject.api.member.dto.ProfileListResponseDto;
 import com.tmproject.api.member.dto.ProfileResponseDto;
 import com.tmproject.api.member.dto.ProfileUpdateRequestDto;
 import com.tmproject.api.member.dto.SignupRequestDto;
@@ -244,5 +245,16 @@ public class MemberService {
         log.info("profileResponseDto.getUsername() : "+profileResponseDto.getUsername());
         log.info("profileResponseDto.getIntroduction() : "+profileResponseDto.getIntroduction());
         return new ApiResponseDto<>("해당 유저 정보 조회 성공",200, profileResponseDto);
+    }
+
+    @Transactional(readOnly = true)
+    public ApiResponseDto<?> getMemberListInfo() {
+        List<Member> memberList = memberRepository.findAll();
+        List<ProfileListResponseDto> responseList = new ArrayList<>();
+        for(int i =1; i<memberList.size(); i++){
+            responseList.add(new ProfileListResponseDto(memberList.get(i)));
+            // admin 계정이 무조건 id가 1이기에 접근하면 안됨
+        }
+        return new ApiResponseDto<>("모든 멤버 조회 성공",200,responseList);
     }
 }
