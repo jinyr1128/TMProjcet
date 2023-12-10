@@ -11,6 +11,9 @@ import com.tmproject.global.common.ApiResponseDto;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,9 +95,11 @@ public class MemberService {
 
     @Transactional
     public ApiResponseDto<?> updateMember(long memberId, ProfileUpdateRequestDto requestDto, MemberDetailsImpl memberDetails){
-        Member memberEntity = memberRepository.findById(memberId).orElseThrow(
-                ()-> new IllegalArgumentException("해당 id는 존재하지 않습니다.")
-        );
+        Member memberEntity = memberRepository.findById(memberId).orElse(null);
+        if(memberEntity == null){
+            return new ApiResponseDto<>("해당 id는 존재하지 않습니다.", 200,null);
+        }
+
         log.info("requestDto.getUsername() : "+requestDto.getUsername());
         log.info("memberDetails.getUsername() : "+memberDetails.getMember().getUsername());
         if(!memberDetails.getMember().getUsername().equals(requestDto.getUsername())){
@@ -171,9 +176,10 @@ public class MemberService {
 
     @Transactional
     public ApiResponseDto<?> updateMemberProfileImage(long memberId, MultipartFile imageFile, MemberDetailsImpl memberDetails) {
-        Member memberEntity = memberRepository.findById(memberId).orElseThrow(
-                ()-> new IllegalArgumentException("해당 유저는 존재하지 않습니다.")
-        );
+        Member memberEntity = memberRepository.findById(memberId).orElse(null);
+        if(memberEntity == null){
+            return new ApiResponseDto<>("해당 Member Id는 존재하지 않습니다", 200, null);
+        }
         log.info("memberId : "+memberId);
         log.info("memberDetails.getMember().getId() : "+memberDetails.getMember().getId());
         if (memberDetails.getMember().getId() != memberId) {
@@ -218,21 +224,21 @@ public class MemberService {
         memberRepository.save(memberEntity);
         return new ApiResponseDto<>("회원 프로필 사진 변경 성공",200,null);
     }
+    public ApiResponseDto<ProfileResponseDto> getMemberInfo(long memberId) {
+        log.info("memberId : " + memberId);
 
-    public ApiResponseDto<ProfileResponseDto> getMemberInfo(long memberId, MemberDetailsImpl memberDetails) {
-        log.info("memberId : "+memberId);
-        // 지금 조회하려는 memberId
-        log.info("member.getMember().getId() : "+ memberDetails.getMember().getId());
-        // 로그인한 맴버 아이디
-        log.info("member.getMember().getUsername() : "+ memberDetails.getMember().getUsername());
-        log.info("memberDetails.getMember().getUsername().equals(\"root\") && memberDetails.getMember().getId() != 1L" +
-                (memberDetails.getMember().getUsername().equals("root") && memberDetails.getMember().getId() != 1L));
-        if(memberDetails.getMember().getId() != 1L && memberId == 1L){
-            return new ApiResponseDto<>("해당 유저는 접근 권한이 없습니다.",403,null);
+        String annoymousOrLoginUsername = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        log.info("username : "+annoymousOrLoginUsername);
+
+        if(!annoymousOrLoginUsername.equals("root") && memberId == 1L){
+            return new ApiResponseDto<>("해당 유저는 접근 권한이 없습니다.", 403, null);
         }
-        Member member = memberRepository.findById(memberId).orElseThrow(
-                ()-> new IllegalArgumentException("해당하는 Member Id는 존재하지 않습니다.")
-        );
+
+        Member member = memberRepository.findById(memberId).orElse(null);
+        if(member == null){
+            return new ApiResponseDto<>("해당하는 Member Id는 존재하지 않습니다.", 400, null);
+        }
+
         ProfileResponseDto profileResponseDto = ProfileResponseDto
                 .builder()
                 .username(member.getUsername())
@@ -240,15 +246,19 @@ public class MemberService {
                 .profileImageUrl(member.getProfileImageUrl())
                 .build();
 
-        log.info("profileResponseDto.getUsername() : "+profileResponseDto.getUsername());
-        log.info("profileResponseDto.getIntroduction() : "+profileResponseDto.getIntroduction());
-        return new ApiResponseDto<>("해당 유저 정보 조회 성공",200, profileResponseDto);
+        log.info("profileResponseDto.getUsername() : " + profileResponseDto.getUsername());
+        log.info("profileResponseDto.getIntroduction() : " + profileResponseDto.getIntroduction());
+
+        return new ApiResponseDto<>("해당 유저 정보 조회 성공", 200, profileResponseDto);
     }
 
     @Transactional(readOnly = true)
     public ApiResponseDto<?> getMemberListInfo() {
         List<Member> memberList = memberRepository.findAll();
         List<ProfileResponseDto> responseList = new ArrayList<>();
+        if(memberList.size() == 1){
+            return new ApiResponseDto<>("관리자 제외 멤버가 존재하지 않습니다.",400, null);
+        }
         for(int i =1; i<memberList.size(); i++){
             responseList.add(new ProfileResponseDto(memberList.get(i)));
             // admin 계정이 무조건 id가 1이기에 절대 안됨, memberList.get(0) 접근 불가

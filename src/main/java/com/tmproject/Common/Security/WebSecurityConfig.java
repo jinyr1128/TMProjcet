@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -61,15 +62,15 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers("/api/**").permitAll()
-                        .requestMatchers("/api/member/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/member/profile/**").permitAll()
+                        .requestMatchers("/api/member/login","/api/member/loginPage").permitAll()
                         .requestMatchers("/api/member/signup").permitAll()
-                        .requestMatchers("/api/member/loginPage").permitAll()
                         .requestMatchers("/api/member/kakao/callback").permitAll()
                         .requestMatchers("/api/member/naver/callback").permitAll()
                         .requestMatchers("/api/member/google/callback").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/member/profile/**").authenticated()
+                        .requestMatchers("/api/member/profile/**/imageProfileUrl").authenticated()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
-                        // 임시 테스트를 위해
         );
 
         http.formLogin((formLogin) ->
