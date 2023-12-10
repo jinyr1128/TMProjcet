@@ -66,7 +66,7 @@ public class FollowControllerTest {
 
         // When
         MvcResult mvcResult = mockMvc.perform(
-                MockMvcRequestBuilders.post("/api/users/{followerId}/follow", followerId)
+                MockMvcRequestBuilders.post("/api/member/{followerId}/follow", followerId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andReturn();
@@ -84,7 +84,7 @@ public class FollowControllerTest {
         Long followerId = 1L;
 
         // When
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/{followerId}/follow", followerId)
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/api/member/{followerId}/follow", followerId)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andReturn();
