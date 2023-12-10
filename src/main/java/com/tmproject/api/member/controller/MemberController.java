@@ -63,4 +63,10 @@ public class MemberController {
         ApiResponseDto<ProfileResponseDto> apiResponseDto = memberService.getMemberInfo(memberId, memberDetails);
         return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponseDto<?>> getMemberListInfo(){
+        ApiResponseDto<?> apiResponseDto = memberService.getMemberListInfo();
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
+    }
 }

@@ -248,9 +248,9 @@ public class MemberService {
     @Transactional(readOnly = true)
     public ApiResponseDto<?> getMemberListInfo() {
         List<Member> memberList = memberRepository.findAll();
-        List<ProfileListResponseDto> responseList = new ArrayList<>();
+        List<ProfileResponseDto> responseList = new ArrayList<>();
         for(int i =1; i<memberList.size(); i++){
-            responseList.add(new ProfileListResponseDto(memberList.get(i)));
+            responseList.add(new ProfileResponseDto(memberList.get(i)));
             // admin 계정이 무조건 id가 1이기에 절대 안됨, memberList.get(0) 접근 불가
         }
         return new ApiResponseDto<>("모든 멤버 조회 성공",200,responseList);
