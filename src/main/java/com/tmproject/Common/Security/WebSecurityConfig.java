@@ -62,12 +62,12 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/api/**").permitAll()
-                        /*.requestMatchers("/api/member/login").permitAll()
+                        .requestMatchers("/api/member/login").permitAll()
                         .requestMatchers("/api/member/signup").permitAll()
                         .requestMatchers("/api/member/loginPage").permitAll()
                         .requestMatchers("/api/member/kakao/callback").permitAll()
                         .requestMatchers("/api/member/naver/callback").permitAll()
-                        .requestMatchers("/api/member/google/callback").permitAll()*/
+                        .requestMatchers("/api/member/google/callback").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
                         // 임시 테스트를 위해
         );
@@ -75,6 +75,7 @@ public class WebSecurityConfig {
         http.formLogin((formLogin) ->
                 formLogin
                         .loginPage("/api/member/loginPage").permitAll()
+                        .defaultSuccessUrl("/homePage")
                 // loginPage 임시 지정
         );
 
