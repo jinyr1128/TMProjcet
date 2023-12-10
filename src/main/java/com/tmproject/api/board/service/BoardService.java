@@ -11,11 +11,14 @@ import com.tmproject.api.member.entity.Member;
 import com.tmproject.api.member.repository.MemberRepository;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,11 +39,13 @@ public class BoardService {
         return new BoardResponseDto("게시글 작성 성공", 201, board);
     }
 
+    @Transactional(readOnly = true)
     public BoardListDto getAllBoards() {
         List<Board> boards = boardRepository.findAll();
         return new BoardListDto("전체 게시글 조회 성공", 200, boards);
     }
 
+    @Transactional(readOnly = true)
     public BoardResponseDto getBoard(Long boardId) {
         Board board = boardRepository.findById(boardId)
                 .orElseThrow(() -> new BoardNotFoundException("게시글을 찾을 수 없습니다."));

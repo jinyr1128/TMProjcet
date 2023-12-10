@@ -133,7 +133,7 @@ public class OAuthService {
         }
     }
 
-    private String getToken(String code, String state, String oauthType) throws JsonProcessingException{
+    public String getToken(String code, String state, String oauthType) throws JsonProcessingException{
         switch(oauthType){
             case OauthEnum.Authority.KAKAO:
                 URI kakaoUri = UriComponentsBuilder
@@ -248,7 +248,7 @@ public class OAuthService {
     }
 
     // 카카오 로직
-    private KakaoMemberInfoDto getKakaoMemberInfo(String accessToken) throws JsonProcessingException {
+    public KakaoMemberInfoDto getKakaoMemberInfo(String accessToken) throws JsonProcessingException {
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kapi.kakao.com")
@@ -368,7 +368,7 @@ public class OAuthService {
         }
     }
 
-    private NaverMemberInfoDto getNaverMemberInfo(String accessToken) throws JsonProcessingException {
+    public NaverMemberInfoDto getNaverMemberInfo(String accessToken) throws JsonProcessingException {
         log.info("getNaverMemberInfo() start! ");
         URI uri = UriComponentsBuilder
                 .fromUriString("https://openapi.naver.com")
@@ -487,7 +487,7 @@ public class OAuthService {
         }
     }
 
-    private GoogleMemberInfoDto getGoogleMemberInfo(String accessToken) throws JsonProcessingException {
+    public GoogleMemberInfoDto getGoogleMemberInfo(String accessToken) throws JsonProcessingException {
         log.info("getGoogleMemberInfo() start! ");
         URI uri = UriComponentsBuilder
                 // https:/www.googlepis.com/tokeninfo
@@ -615,7 +615,6 @@ public class OAuthService {
             return null;
         }
     }
-
     private void showDuplicateMemberInfo(Member duplicateMember){
         log.info("중복 되는 것이 존재 하는 멤버의 회원 가입 최종 정보");
         log.info("duplicateMember.getUsername() : "+duplicateMember.getUsername());

@@ -9,13 +9,17 @@ import com.tmproject.api.board.dto.BoardViewResponseDto;
 import com.tmproject.api.board.service.BoardService;
 import com.tmproject.api.member.entity.Member;
 import java.util.List;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/member/boards")
 public class BoardController {
@@ -65,6 +69,15 @@ public class BoardController {
         @AuthenticationPrincipal MemberDetailsImpl memberDetails,
         @PageableDefault(sort = "createdAt") Pageable pageable
     ) {
+        String myInfo = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        System.out.println(myInfo);
+        // 로그인을 했는데? 여기는 안들어가?
+        // 여기가 java.lang.NullPointerException: Cannot invoke "com.tmproject.Common.Security.MemberDetailsImpl.getMember()"
+        // because "memberDetails" is null
+        // ? MemberDetails를 못받아 오는 이유가 뭐지?
+        // 로그인한 사용자의 정보를 가져오는 건데...?
+        // memberService에서는 잘 받아온단 말야? 뭔가 이상한데?
+        log.info("memberDetails : "+ memberDetails);
         Member member = memberDetails.getMember();
         List<BoardViewResponseDto> BoardViewResponseDto = boardService.getFollowersBoards(member.getId(), pageable);
 

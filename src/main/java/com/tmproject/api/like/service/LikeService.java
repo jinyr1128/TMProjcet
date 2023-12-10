@@ -11,8 +11,10 @@ import com.tmproject.api.member.entity.Member;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LikeService {
@@ -25,7 +27,6 @@ public class LikeService {
     public void saveBoardLike(Long boardId, Member member) {
         Board board = boardRepository.findById(boardId).orElseThrow();
         Like likeBoard = Like.likeBoard(member, board);
-
         likeRepository.save(likeBoard);
     }
 
@@ -60,9 +61,4 @@ public class LikeService {
 
         likeRepository.deleteById(likeComment.get().getLikeId());
     }
-
-
-
-
-
 }

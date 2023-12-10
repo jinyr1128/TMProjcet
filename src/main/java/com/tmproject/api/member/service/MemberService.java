@@ -11,9 +11,6 @@ import com.tmproject.global.common.ApiResponseDto;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -178,7 +175,7 @@ public class MemberService {
     public ApiResponseDto<?> updateMemberProfileImage(long memberId, MultipartFile imageFile, MemberDetailsImpl memberDetails) {
         Member memberEntity = memberRepository.findById(memberId).orElse(null);
         if(memberEntity == null){
-            return new ApiResponseDto<>("해당 Member Id는 존재하지 않습니다", 200, null);
+            return new ApiResponseDto<>("해당 Member Id는 존재하지 않습니다", 400, null);
         }
         log.info("memberId : "+memberId);
         log.info("memberDetails.getMember().getId() : "+memberDetails.getMember().getId());
@@ -222,16 +219,13 @@ public class MemberService {
 
         memberEntity.updateProfileImageUrl(uuidImage);
         memberRepository.save(memberEntity);
-        return new ApiResponseDto<>("회원 프로필 사진 변경 성공",200,null);
-    }
-    public ApiResponseDto<ProfileResponseDto> getMemberInfo(long memberId) {
-        log.info("memberId : " + memberId);
+            return new ApiResponseDto<>("회원 프로필 사진 변경 성공",200,null);
+        }
+        public ApiResponseDto<ProfileResponseDto> getMemberInfo(long memberId) {
+            log.info("memberId : " + memberId);
 
-        String annoymousOrLoginUsername = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
-        log.info("username : "+annoymousOrLoginUsername);
-
-        if(!annoymousOrLoginUsername.equals("root") && memberId == 1L){
-            return new ApiResponseDto<>("해당 유저는 접근 권한이 없습니다.", 403, null);
+            if(memberId == 1L){
+                return new ApiResponseDto<>("접근 불가", 403, null);
         }
 
         Member member = memberRepository.findById(memberId).orElse(null);

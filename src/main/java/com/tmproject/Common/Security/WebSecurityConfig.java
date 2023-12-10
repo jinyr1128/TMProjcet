@@ -62,15 +62,22 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
+                        .requestMatchers("/api/**").permitAll() // 테스트를 위해 먼저 성공 되는지 확인
+                        .requestMatchers("/api/member/boards/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/member/profile/**").permitAll()
                         .requestMatchers("/api/member/login","/api/member/loginPage").permitAll()
                         .requestMatchers("/api/member/signup").permitAll()
+                        .requestMatchers("/api/member/logout").authenticated()
+                        .requestMatchers(HttpMethod.PUT,"/api/member/profile/**").authenticated()
+                        .requestMatchers("/api/member/profile/**/imageProfileUrl").authenticated()
+                        .requestMatchers("/api/member/comments/**").authenticated()
                         .requestMatchers("/api/member/kakao/callback").permitAll()
                         .requestMatchers("/api/member/naver/callback").permitAll()
                         .requestMatchers("/api/member/google/callback").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/member/profile/**").authenticated()
-                        .requestMatchers("/api/member/profile/**/imageProfileUrl").authenticated()
-                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리
+                        .requestMatchers("/api/member/**/follow").authenticated()
+                        .requestMatchers(HttpMethod.POST,"/api/member/boards").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/member/boards").authenticated()
+                        .anyRequest().authenticated() // 그 외 모든 요청 인증처리, /api/member/boards/** 요청도 인증이 필요해
         );
 
         http.formLogin((formLogin) ->
@@ -78,6 +85,12 @@ public class WebSecurityConfig {
                         .loginPage("/api/member/loginPage").permitAll()
                         .defaultSuccessUrl("/homePage")
                 // loginPage 임시 지정
+        ).logout(logout ->
+                logout
+                        .logoutUrl("/api/member/logout")
+                        .logoutSuccessUrl("/api/member/loginPage")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
         );
 
         // 필터 관리

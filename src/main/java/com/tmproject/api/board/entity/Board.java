@@ -20,9 +20,10 @@ public class Board extends Timestamped {
     private String title;
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
-    private Member member; //
+    private Member member;
+    // 지연 로딩 전략 -> 즉시 로딩 변경
 
     public Long getId() {
         return id;
