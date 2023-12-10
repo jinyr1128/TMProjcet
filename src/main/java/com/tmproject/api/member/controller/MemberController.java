@@ -58,9 +58,14 @@ public class MemberController {
 
     @GetMapping("/profile/{memberId}")
     public ResponseEntity<ApiResponseDto<ProfileResponseDto>> getMemberInfo(
-            @PathVariable long memberId,
-            @AuthenticationPrincipal MemberDetailsImpl memberDetails){
-        ApiResponseDto<ProfileResponseDto> apiResponseDto = memberService.getMemberInfo(memberId, memberDetails);
+            @PathVariable long memberId){
+        ApiResponseDto<ProfileResponseDto> apiResponseDto = memberService.getMemberInfo(memberId);
+        return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponseDto<?>> getMemberListInfo(){
+        ApiResponseDto<?> apiResponseDto = memberService.getMemberListInfo();
         return new ResponseEntity<>(apiResponseDto, HttpStatus.valueOf(apiResponseDto.getStatusCode()));
     }
 }
