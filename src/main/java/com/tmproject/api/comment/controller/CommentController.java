@@ -32,6 +32,7 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponseDto> deleteComment(@PathVariable Long commentId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println("username : "+username);
         ApiResponseDto response = commentService.deleteComment(commentId, username);
         return ResponseEntity.ok(response);
     }

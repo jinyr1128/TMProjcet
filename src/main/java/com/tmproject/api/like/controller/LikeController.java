@@ -58,9 +58,8 @@ public class LikeController {
         @PathVariable Long commentId
     ) {
         Member member = memberDetails.getMember();
+        System.out.println("member.getUsername() : "+member.getUsername());
         likeService.unLikeComment(commentId, member);
         return ResponseEntity.ok("댓글 좋아요 취소 성공");
     }
-
-
 }

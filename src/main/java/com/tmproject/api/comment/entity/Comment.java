@@ -20,13 +20,14 @@ public class Comment extends Timestamped {
 
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id")
     private Member member; // 댓글 작성자
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "board_id")
     private Board board; // 댓글이 달린 게시물
+    // 지연 로딩에서 즉시 로딩 변경
 
     public Long getId() {
         return id;

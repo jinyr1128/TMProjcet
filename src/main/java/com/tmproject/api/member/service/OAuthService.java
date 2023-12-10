@@ -615,7 +615,6 @@ public class OAuthService {
             return null;
         }
     }
-
     private void showDuplicateMemberInfo(Member duplicateMember){
         log.info("중복 되는 것이 존재 하는 멤버의 회원 가입 최종 정보");
         log.info("duplicateMember.getUsername() : "+duplicateMember.getUsername());
