@@ -1,7 +1,6 @@
 package com.tmproject.api.member.service;
 
 import com.tmproject.Common.Security.MemberDetailsImpl;
-import com.tmproject.api.member.dto.ProfileListResponseDto;
 import com.tmproject.api.member.dto.ProfileResponseDto;
 import com.tmproject.api.member.dto.ProfileUpdateRequestDto;
 import com.tmproject.api.member.dto.SignupRequestDto;
@@ -10,7 +9,6 @@ import com.tmproject.api.member.entity.MemberRoleEnum;
 import com.tmproject.api.member.repository.MemberRepository;
 import com.tmproject.global.common.ApiResponseDto;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -253,7 +251,7 @@ public class MemberService {
         List<ProfileListResponseDto> responseList = new ArrayList<>();
         for(int i =1; i<memberList.size(); i++){
             responseList.add(new ProfileListResponseDto(memberList.get(i)));
-            // admin 계정이 무조건 id가 1이기에 접근하면 안됨
+            // admin 계정이 무조건 id가 1이기에 절대 안됨, memberList.get(0) 접근 불가
         }
         return new ApiResponseDto<>("모든 멤버 조회 성공",200,responseList);
     }
