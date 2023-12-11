@@ -430,7 +430,7 @@ public class MemberServiceTest {
     void updateMemberProfileImageNotFoundMemberId() {
         // given
         long memberId = 2L;
-        long notFoundMemberId = 999L;
+        long notFoundMemberId = 10L;
 
         MemberDetailsImpl memberDetails = new MemberDetailsImpl(
                 Member.builder()
@@ -443,17 +443,11 @@ public class MemberServiceTest {
 
         MockMultipartFile imageFile = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test image".getBytes());
 
-        when(memberRepository.findById(notFoundMemberId)).thenReturn(Optional.empty());
-
         // when & then
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                memberService.updateMemberProfileImage(notFoundMemberId, imageFile, memberDetails)
-        );
+        ApiResponseDto<?> response = memberService.updateMemberProfileImage(memberId, imageFile, memberDetails);
 
-        assertEquals("해당 유저는 존재하지 않습니다.", exception.getMessage());
-
-        verify(memberRepository, times(1)).findById(notFoundMemberId);
-        verify(memberRepository, never()).save(any());
+        assertEquals("해당 Member Id는 존재하지 않습니다", response.getMsg());
+        assertEquals(400, response.getStatusCode());
     }
 
     @Test

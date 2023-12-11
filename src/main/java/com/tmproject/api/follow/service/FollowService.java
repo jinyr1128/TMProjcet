@@ -59,6 +59,4 @@ public class FollowService {
             follower);
         return optionalFollow.isPresent();
     }
-
-
 }
